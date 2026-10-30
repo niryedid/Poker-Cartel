@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isAdmin() {
+      return signedIn()
+        && request.auth.token.email == 'nir.yedid@googlemail.com'
+        && request.auth.token.email_verified == true;
+    }
+    function isSelf(uid) { return signedIn() && request.auth.uid == uid; }
+    function isMember() { return signedIn() && exists(/databases/$(database)/documents/players/$(request.auth.uid)); }
+
+    match /players/{uid} { allow read: if signedIn(); allow write: if isAdmin() || isSelf(uid); }
+    match /photos/{uid}  { allow read: if signedIn(); allow write: if isAdmin() || isSelf(uid); }
+    match /votes/{uid}   { allow read: if signedIn(); allow write: if isAdmin() || (isMember() && isSelf(uid)); }
+    match /games/{gid}   { allow read: if signedIn(); allow write: if isAdmin(); }
+    match /config/{doc}  { allow read: if signedIn(); allow write: if isAdmin(); }
+    match /chat/{mid} {
+      allow read: if signedIn();
+      allow create: if isMember() && request.resource.data.uid == request.auth.uid
+                    && request.resource.data.text is string && request.resource.data.text.size() <= 500;
+      allow delete: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+    }
+  }
+}

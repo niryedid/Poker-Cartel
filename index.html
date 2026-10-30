@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE YEDID's POKER CARTEL</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Poker Cartel">
+<meta name="theme-color" content="#1d1510">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="config.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Creepster&family=Rye&family=Oswald:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}[hidden]{display:none!important}
+html,body{margin:0;padding:0}
+/* ---------- THEMES ---------- */
+[data-theme=cartel]{--bg:#efe4d2;--bg-grad:radial-gradient(1200px 700px at 50% -10%,#fffaf0 0%,#f3e8d6 45%,#e6d5ba 100%);--card:#fffaf2;--card2:#f6ecdb;--line:#e2cfae;--ink:#1d1510;--ink2:#4a3b2c;--muted:#857058;--accent:#b0802a;--accent-strong:#8a6114;--accent-ink:#fff;--accent2:#b3122a;--good:#1d7a3e;--bad:#b3122a;--title-font:'Cinzel',serif;--title-fill:linear-gradient(180deg,#f0cf77 0%,#c18f2e 45%,#7a5410 100%);--title-shadow:0 2px 0 rgba(0,0,0,.08);--nav:#1d1510;--nav-ink:#f1dfb2;--nav-active:#e5b955;--hero-shade:linear-gradient(90deg,rgba(255,250,240,.0) 0%,rgba(255,250,240,.35) 100%);--shadow:0 8px 24px rgba(90,60,15,.12);--suit-op:.05;--chip:#1d1510}
+[data-theme=felt]{--bg:#0a4a2a;--bg-grad:radial-gradient(ellipse at 50% 30%,#168a4f 0%,#0c5c34 45%,#05341c 100%);--card:rgba(0,20,10,.42);--card2:rgba(0,0,0,.25);--line:rgba(229,185,85,.35);--ink:#f6efdc;--ink2:#dcd1b6;--muted:#a9c2ad;--accent:#e5b955;--accent-strong:#f3cd6e;--accent-ink:#1a1206;--accent2:#d0213d;--good:#7be39b;--bad:#ff7b8c;--title-font:'Rye',serif;--title-fill:linear-gradient(180deg,#fff1c1 0%,#e5b955 50%,#a8741a 100%);--title-shadow:0 3px 0 rgba(0,0,0,.35);--nav:#3a2414;--nav-ink:#f1dfb2;--nav-active:#e5b955;--hero-shade:linear-gradient(180deg,rgba(5,52,28,.2),rgba(5,52,28,.75));--shadow:0 10px 30px rgba(0,0,0,.35);--suit-op:.06;--chip:#e5b955}
+[data-theme=highroller]{--bg:#0b0b0c;--bg-grad:radial-gradient(1000px 600px at 50% -10%,#2a2416 0%,#121110 45%,#070707 100%);--card:#141312;--card2:#1c1a17;--line:rgba(212,175,55,.28);--ink:#f3ead6;--ink2:#cfc4ab;--muted:#968a70;--accent:#d4af37;--accent-strong:#f0cc5a;--accent-ink:#141006;--accent2:#a3182f;--good:#6fd38d;--bad:#ff6f80;--title-font:'Cinzel',serif;--title-fill:linear-gradient(180deg,#fff0bf 0%,#d4af37 50%,#8c6a12 100%);--title-shadow:0 2px 12px rgba(212,175,55,.25);--nav:#000;--nav-ink:#e9dcb8;--nav-active:#d4af37;--hero-shade:linear-gradient(180deg,rgba(0,0,0,.2),rgba(0,0,0,.8));--shadow:0 10px 30px rgba(0,0,0,.5);--suit-op:.04;--chip:#d4af37}
+[data-theme=saloon]{--bg:#2b1b10;--bg-grad:radial-gradient(1100px 700px at 50% -10%,#5a3a22 0%,#35220f 50%,#1d1209 100%);--card:#3a2615;--card2:#45301c;--line:rgba(224,162,74,.35);--ink:#f5e6c8;--ink2:#e2cfa9;--muted:#bba27a;--accent:#e0a24a;--accent-strong:#f2bb66;--accent-ink:#20140a;--accent2:#b33a22;--good:#9fe08a;--bad:#ff8a73;--title-font:'Rye',serif;--title-fill:linear-gradient(180deg,#ffe2a8 0%,#e0a24a 55%,#94591c 100%);--title-shadow:0 3px 0 rgba(0,0,0,.45);--nav:#1a0f07;--nav-ink:#f0d9ad;--nav-active:#f2bb66;--hero-shade:linear-gradient(180deg,rgba(29,18,9,.25),rgba(29,18,9,.85));--shadow:0 10px 30px rgba(0,0,0,.45);--suit-op:.06;--chip:#e0a24a}
+[data-theme=neon]{--bg:#090a1c;--bg-grad:radial-gradient(900px 600px at 15% -10%,#3a0d4f 0%,transparent 60%),radial-gradient(900px 600px at 100% 10%,#06324a 0%,transparent 60%),#090a1c;--card:#11132b;--card2:#171a3a;--line:rgba(255,45,117,.35);--ink:#f2f3ff;--ink2:#cfd2f5;--muted:#8e93c4;--accent:#ff2d75;--accent-strong:#ff5c96;--accent-ink:#fff;--accent2:#00e5ff;--good:#3dffa8;--bad:#ff5c7a;--title-font:'Oswald',sans-serif;--title-fill:linear-gradient(180deg,#fff 0%,#ff9cc0 60%,#ff2d75 100%);--title-shadow:0 0 18px rgba(255,45,117,.7);--nav:#05061a;--nav-ink:#cfd2f5;--nav-active:#00e5ff;--hero-shade:linear-gradient(180deg,rgba(9,10,28,.2),rgba(9,10,28,.85));--shadow:0 0 0 1px rgba(255,45,117,.15),0 10px 30px rgba(0,0,0,.5);--suit-op:.05;--chip:#00e5ff}
+
+[data-theme=halloween]{--bg:#120a1c;--bg-grad:radial-gradient(900px 500px at 50% -5%,rgba(255,122,0,.35) 0%,transparent 60%),radial-gradient(800px 600px at 100% 100%,rgba(122,40,180,.35) 0%,transparent 60%),linear-gradient(180deg,#1a0d27 0%,#0b0612 100%);--card:rgba(28,14,40,.82);--card2:rgba(52,24,70,.6);--line:rgba(255,122,0,.35);--ink:#fbeedd;--ink2:#e6d2c0;--muted:#b49cc4;--accent:#ff7a00;--accent-strong:#ff9a2e;--accent-ink:#1a0d00;--accent2:#9be22d;--good:#9be22d;--bad:#ff5a5f;--title-font:'Creepster',cursive;--title-fill:linear-gradient(180deg,#ffd18a 0%,#ff7a00 55%,#b33a00 100%);--title-shadow:0 0 16px rgba(255,122,0,.65);--nav:#0b0612;--nav-ink:#f3dcc6;--nav-active:#ff9a2e;--hero-shade:linear-gradient(180deg,rgba(18,10,28,.35),rgba(18,10,28,.88));--shadow:0 0 0 1px rgba(255,122,0,.12),0 10px 30px rgba(0,0,0,.55);--suit-op:.10;--chip:#ff7a00}
+[data-theme=halloween] body::before{filter:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg font-size='26'%3E%3Ctext x='10' y='40'%3E%F0%9F%8E%83%3C/text%3E%3Ctext x='95' y='60'%3E%F0%9F%A6%87%3C/text%3E%3Ctext x='40' y='125'%3E%F0%9F%95%B8%3C/text%3E%3Ctext x='115' y='145' font-size='20'%3E%F0%9F%91%BB%3C/text%3E%3C/g%3E%3C/svg%3E")}
+[data-theme=halloween] .title{letter-spacing:.05em;font-weight:400}
+[data-theme=halloween] .hero-img{border-color:#ff7a00;box-shadow:0 0 30px rgba(255,122,0,.55),0 14px 40px rgba(0,0,0,.5);filter:sepia(.35) hue-rotate(-15deg) saturate(1.3) brightness(.92)}
+[data-theme=halloween] .hero{border-bottom-color:#ff7a00}
+[data-theme=halloween] .sec-h h2::before{content:"🎃"}
+[data-theme=halloween] .kpi::after{opacity:.35}
+[data-theme=halloween] .pod .step{background:linear-gradient(180deg,#ffb04d,#ff7a00);box-shadow:inset 0 -6px 0 rgba(0,0,0,.25),0 0 16px rgba(255,122,0,.4)}
+[data-theme=halloween] .modal{border-color:#ff7a00;box-shadow:0 0 40px rgba(255,122,0,.35)}
+[data-theme=halloween] .hero-sub{color:#fbeedd}
+.bats{display:none;position:absolute;inset:0;pointer-events:none;overflow:hidden}
+[data-theme=halloween] .bats{display:block}
+.bat{position:absolute;font-size:22px;left:-40px;animation:fly 14s linear infinite;filter:drop-shadow(0 0 4px rgba(0,0,0,.6))}
+.bat:nth-child(2){top:18%;font-size:16px;animation-duration:18s;animation-delay:-6s}
+.bat:nth-child(3){top:60%;font-size:26px;animation-duration:22s;animation-delay:-11s}
+.bat:nth-child(4){top:35%;font-size:14px;animation-duration:16s;animation-delay:-3s}
+.bat:nth-child(1){top:8%}
+@keyframes fly{0%{transform:translate(0,0) scaleX(1)}25%{transform:translate(30vw,-12px)}50%{transform:translate(60vw,10px)}75%{transform:translate(90vw,-8px)}100%{transform:translate(110vw,0)}}
+@media (prefers-reduced-motion:reduce){.bat{animation:none;display:none}}
+.web{display:none;position:absolute;top:0;right:0;width:140px;height:140px;opacity:.5;pointer-events:none}
+[data-theme=halloween] .web{display:block}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--bg);background-image:var(--bg-grad);background-attachment:fixed;min-height:100vh;font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;padding-bottom:84px}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:var(--suit-op);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23000' font-size='26' font-family='serif'%3E%3Ctext x='10' y='34'%3E%E2%99%A0%3C/text%3E%3Ctext x='70' y='34'%3E%E2%99%A5%3C/text%3E%3Ctext x='40' y='94'%3E%E2%99%A6%3C/text%3E%3Ctext x='95' y='94'%3E%E2%99%A3%3C/text%3E%3C/g%3E%3C/svg%3E");z-index:0}
+[data-theme=felt] body::before,[data-theme=highroller] body::before,[data-theme=saloon] body::before,[data-theme=neon] body::before{filter:invert(1)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px;position:relative;z-index:1}
+a{color:var(--accent-strong)}
+button{font-family:inherit}
+/* ---------- HERO ---------- */
+.hero{position:relative;overflow:hidden;border-bottom:3px solid var(--accent)}
+.hero-bg{position:absolute;inset:-30px;background:url(hero.jpg) center/cover;filter:blur(18px) saturate(1.1);transform:scale(1.1);opacity:.9}
+.hero-bg::after{content:"";position:absolute;inset:0;background:var(--hero-shade)}
+.hero-inner{position:relative;display:flex;align-items:center;gap:28px;padding:22px 16px;max-width:1180px;margin:0 auto}
+.hero-img{width:min(420px,42%);aspect-ratio:508/337;border-radius:14px;border:3px solid var(--accent);box-shadow:0 14px 40px rgba(0,0,0,.35);background:url(hero.jpg) center/cover;flex:none}
+.hero-text{flex:1;min-width:0}
+.crown{font-size:28px;color:var(--accent);line-height:1}
+.title{font-family:var(--title-font);font-weight:900;font-size:clamp(30px,5.2vw,62px);line-height:1.02;margin:.15em 0 .2em;letter-spacing:.02em;background:var(--title-fill);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(var(--title-shadow))}
+[data-theme=neon] .title{text-transform:uppercase;letter-spacing:.06em;filter:drop-shadow(0 0 10px rgba(255,45,117,.6))}
+.hero-sub{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-family:'Oswald',sans-serif;letter-spacing:.18em;text-transform:uppercase;font-size:13px;color:var(--ink)}
+.hero-sub .suits span{margin-right:4px}.red{color:#d0213d}
+[data-theme=cartel] .hero-sub{color:#2a1e14}
+.hero-actions{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+@media (max-width:720px){.hero-inner{flex-direction:column;align-items:stretch;gap:14px;padding:14px 14px 18px}.hero-img{width:100%}.title{text-align:center}.hero-sub{justify-content:center}.crown{text-align:center}.hero-actions{justify-content:center}}
+/* ---------- NAV ---------- */
+.nav{position:sticky;top:0;z-index:20;background:var(--nav);box-shadow:0 4px 18px rgba(0,0,0,.25)}
+.nav .wrap{display:flex;align-items:center;gap:4px;height:54px}
+.nav a.tab{color:var(--nav-ink);text-decoration:none;font-family:'Oswald',sans-serif;letter-spacing:.08em;text-transform:uppercase;font-size:14px;padding:8px 14px;border-radius:999px;opacity:.82;display:flex;align-items:center;gap:6px}
+.nav a.tab.on{opacity:1;color:var(--nav-active);background:rgba(255,255,255,.07)}
+.nav .spacer{flex:1}
+.theme-btn{background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--nav-ink);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer;display:flex;gap:6px;align-items:center}
+.mnav{display:none}
+.authbox{display:flex;align-items:center;gap:8px;margin-left:8px}
+.authbox .abwho{display:flex;align-items:center;gap:8px;color:var(--nav-ink);font-weight:600;font-size:13.5px;max-width:160px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.nbtn{border:1px solid rgba(255,255,255,.25);background:transparent;color:var(--nav-ink);border-radius:999px;padding:6px 13px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.nbtn.gold{background:linear-gradient(180deg,var(--accent-strong),var(--accent));color:var(--accent-ink);border-color:transparent}
+@media (max-width:720px){.theme-btn span,.authbox .abwho .nm{display:none}.authbox{margin-left:4px}}
+body.locked .nav .tabs,body.locked .mnav{display:none!important}
+body.locked{padding-bottom:30px}
+.auth-card{max-width:440px;margin:10px auto 30px;padding:22px}
+.auth-card h2{margin:0 0 4px;font-family:var(--title-font);font-size:26px;color:var(--accent-strong);text-align:center;font-weight:400}
+.auth-card .lead{text-align:center;color:var(--ink2);margin:0 0 16px;font-size:14px}
+.auth-card .me{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:14px}
+.auth-card form{display:flex;flex-direction:column;gap:12px}
+.auth-card .btn{justify-content:center}
+.pw{position:relative;display:block}
+.pw input{padding-right:78px}
+.pw .eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--accent-strong);font-weight:700;font-size:12px;cursor:pointer;padding:6px}
+.linkbtn{background:none;border:0;color:var(--accent-strong);text-decoration:underline;cursor:pointer;font-size:13.5px;padding:4px;align-self:center}
+.req{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px dashed var(--accent);border-radius:10px;background:var(--card2)}
+
+@media (max-width:720px){
+ .nav .tabs{display:none}
+ .mnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--nav);border-top:2px solid var(--accent);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+ .mnav a{flex:1;text-align:center;color:var(--nav-ink);text-decoration:none;font-size:10.5px;font-family:'Oswald',sans-serif;letter-spacing:.06em;text-transform:uppercase;opacity:.75;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0}
+ .mnav a .ic{font-size:19px;line-height:1}
+ .mnav a.on{opacity:1;color:var(--nav-active)}
+ .nav .wrap{height:48px}
+ .nav .brand{display:block!important}
+}
+.nav .brand{display:none;font-family:var(--title-font);color:var(--nav-active);font-weight:800;font-size:15px;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (min-width:721px){body{padding-bottom:40px}}
+/* ---------- LAYOUT ---------- */
+main{padding:20px 0}
+.banner{border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--card2);border:1px dashed var(--accent)}
+.banner b{color:var(--accent-strong)}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:1.35fr 1fr}
+@media (max-width:900px){.g2{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.sec-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px}
+.sec-h h2{margin:0;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:17px;font-weight:600;display:flex;align-items:center;gap:8px}
+.sec-h h2::before{content:"♠";color:var(--accent)}
+.muted{color:var(--muted)}.small{font-size:13px}
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+@media (max-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.kpi .lab{font-size:11.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:600}
+.kpi .val{font-family:'Oswald',sans-serif;font-size:28px;font-weight:600;margin-top:4px;line-height:1.1}
+.kpi .sub{font-size:12.5px;color:var(--ink2);margin-top:2px}
+.kpi::after{content:attr(data-suit);position:absolute;right:10px;top:4px;font-size:34px;opacity:.12}
+.pos{color:var(--good)}.neg{color:var(--bad)}
+/* Buttons */
+.btn{appearance:none;border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:10px;padding:9px 14px;font-weight:600;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;text-decoration:none;line-height:1.2}
+.btn:hover{border-color:var(--accent)}
+.btn.gold{background:linear-gradient(180deg,var(--accent-strong),var(--accent));color:var(--accent-ink);border-color:transparent;box-shadow:0 3px 0 rgba(0,0,0,.18)}
+.btn.red{background:var(--accent2);color:#fff;border-color:transparent}
+.btn.wa{background:#25D366;color:#06301a;border-color:transparent}
+.btn.sm{padding:6px 10px;font-size:12.5px;border-radius:8px}
+.btn.ghost{background:transparent}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+/* Game card */
+.games{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.gc{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:0;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+.gc-top{padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px;background:linear-gradient(90deg,var(--card2),transparent);border-bottom:1px solid var(--line)}
+.badge{display:inline-flex;align-items:center;gap:6px;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.08em;font-size:12.5px;padding:4px 10px;border-radius:999px;border:1px solid var(--accent);color:var(--accent-strong)}
+.badge.cash{border-color:var(--accent2);color:var(--accent2)}
+[data-theme=cartel] .badge.cash{color:#a3102a}
+.status{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:3px 8px;border-radius:6px}
+.st-open{background:rgba(37,211,102,.16);color:var(--good)}
+.st-closed{background:rgba(200,150,40,.18);color:var(--accent-strong)}
+.st-completed{background:rgba(127,127,127,.18);color:var(--muted)}
+.gc-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:10px;flex:1}
+.gc h3{margin:0;font-size:18px;font-family:'Oswald',sans-serif;font-weight:500;letter-spacing:.02em}
+.meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13.5px;color:var(--ink2)}
+.seats{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink2)}
+.bar{flex:1;height:8px;border-radius:99px;background:var(--card2);overflow:hidden;border:1px solid var(--line)}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-strong));border-radius:99px}
+.votes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.vbtn{border:1.5px solid var(--line);background:var(--card2);color:var(--ink);border-radius:10px;padding:9px 4px;font-weight:700;font-size:13.5px;cursor:pointer}
+.vbtn.on.in{background:var(--good);border-color:var(--good);color:#06240f}
+[data-theme=cartel] .vbtn.on.in{color:#fff}
+.vbtn.on.maybe{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.vbtn.on.out{background:var(--bad);border-color:var(--bad);color:#fff}
+.who{font-size:13px;display:flex;flex-direction:column;gap:6px}
+.who .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700;margin-right:4px}
+.chips{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:2px 9px 2px 2px;font-size:12.5px}
+.av{width:22px;height:22px;border-radius:50%;display:inline-grid;place-items:center;font-size:10px;font-weight:800;color:#fff;background:#555;border:2px dashed rgba(255,255,255,.55);flex:none}
+.av.lg{width:46px;height:46px;font-size:16px;border-width:3px}
+.av.xl{width:150px;height:150px;font-size:44px;border-width:4px}
+@media (max-width:720px){.av.xl{width:120px;height:120px}}
+img.av.ph[data-act=zoom]{cursor:zoom-in;transition:transform .15s}
+img.av.ph[data-act=zoom]:hover{transform:scale(1.04)}
+.zoom{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;cursor:zoom-out}
+.zoom img{max-width:min(92vw,820px);max-height:80vh;border-radius:16px;border:3px solid var(--accent);box-shadow:0 20px 60px rgba(0,0,0,.6);object-fit:contain;background:#000}
+.zoom .cap{color:#fff;font-family:'Oswald',sans-serif;letter-spacing:.08em;font-size:18px;text-transform:uppercase}
+.zoom .x{position:absolute;top:14px;right:18px;color:#fff;font-size:34px;background:none;border:0;cursor:pointer}
+img.av.ph{object-fit:cover;border:2px solid var(--accent);padding:0;background:#000}
+img.av.lg.ph{border-width:3px}img.av.xl.ph{border-width:4px;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.photo-pick{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.photo-pick input[type=file]{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.photo-pick .btns{display:flex;gap:8px;flex-wrap:wrap}
+.hero-me{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.18);border:1px solid var(--accent);border-radius:999px;padding:4px 14px 4px 4px;font-weight:700}
+[data-theme=cartel] .hero-me{background:rgba(255,250,240,.7)}
+.admin-row{border-top:1px dashed var(--line);padding-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+.winner{font-size:13.5px}
+/* Podium */
+.podium{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:10px;align-items:end;margin:6px 0 4px}
+.pod{text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+.pod .name{font-weight:700;font-size:14px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pod .amt{font-family:'Oswald',sans-serif;font-size:16px}
+.pod .step{width:100%;border-radius:10px 10px 4px 4px;display:grid;place-items:center;font-family:'Oswald',sans-serif;font-size:26px;font-weight:600;color:var(--accent-ink);background:linear-gradient(180deg,var(--accent-strong),var(--accent));box-shadow:inset 0 -6px 0 rgba(0,0,0,.15)}
+.pod.p1 .step{height:96px}.pod.p2 .step{height:70px;filter:saturate(.35) brightness(1.1)}.pod.p3 .step{height:54px;filter:sepia(.6) saturate(1.4) hue-rotate(-12deg) brightness(.9)}
+.medal{font-size:22px}
+/* Tables */
+.tabs-inline{display:inline-flex;background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px}
+.tabs-inline button{border:0;background:transparent;color:var(--ink2);padding:6px 12px;border-radius:999px;font-weight:600;font-size:13px;cursor:pointer}
+.tabs-inline button.on{background:var(--accent);color:var(--accent-ink)}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700;padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td.num,th.num{text-align:right;font-family:'Oswald',sans-serif;font-size:15px}
+th.num{font-family:inherit;font-size:11px}
+tr.me td{background:rgba(229,185,85,.10)}
+.rank{font-family:'Oswald',sans-serif;font-size:16px;width:34px}
+.empty{padding:22px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}
+.empty .big{font-size:30px;display:block;margin-bottom:6px}
+/* Stats */
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:720px){.pgrid{grid-template-columns:1fr}}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow)}
+.pcard h4{margin:0 0 8px;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.12em;font-size:13px;color:var(--accent-strong);font-weight:500}
+.pcard .net{font-family:'Oswald',sans-serif;font-size:32px;font-weight:600;line-height:1}
+.pcard dl{display:grid;grid-template-columns:1fr auto;gap:4px 10px;margin:10px 0 0;font-size:13px}
+.pcard dt{color:var(--muted)}.pcard dd{margin:0;text-align:right;font-weight:600}
+.chart{position:relative}
+.chart svg{width:100%;height:auto;display:block;overflow:visible}
+.tip{position:absolute;pointer-events:none;background:var(--nav);color:var(--nav-ink);border:1px solid var(--accent);border-radius:8px;padding:6px 9px;font-size:12.5px;white-space:nowrap;transform:translate(-50%,-115%);display:none;z-index:5;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.profile-head{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.profile-head h2{margin:0;font-family:'Oswald',sans-serif;font-weight:500;font-size:24px}
+select,input,textarea{font-family:inherit;font-size:15px;color:var(--ink);background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:9px 11px;width:100%}
+[data-theme=felt] select,[data-theme=felt] input,[data-theme=felt] textarea{background:rgba(0,0,0,.3)}
+select option{color:#111;background:#fff}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;color:var(--ink2);text-transform:uppercase;letter-spacing:.06em}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fgrid .full{grid-column:1/-1}
+@media (max-width:560px){.fgrid{grid-template-columns:1fr}}
+.money{position:relative;display:block}
+.money::before{content:"£";position:absolute;left:12px;top:50%;transform:translateY(-50%);font-weight:700;color:var(--accent-strong);pointer-events:none}
+.money input{padding-left:26px;font-family:'Oswald',sans-serif;font-size:16px;letter-spacing:.02em}
+label.f.check{flex-direction:row;text-transform:none;letter-spacing:0;font-weight:500;font-size:14px;color:var(--ink)}
+.check{display:flex;gap:8px;align-items:center;font-size:14px;text-transform:none;letter-spacing:0;font-weight:500}
+.check input{width:auto}
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;display:none;align-items:flex-start;justify-content:center;padding:4vh 12px;overflow-y:auto}
+.modal-bg.open{display:flex}
+.modal{background:var(--card);background-color:var(--bg);background-image:linear-gradient(var(--card),var(--card));border:2px solid var(--accent);border-radius:16px;width:100%;max-width:620px;box-shadow:0 20px 60px rgba(0,0,0,.5);overflow:hidden}
+.modal-h{padding:14px 16px;display:flex;justify-content:space-between;align-items:center;background:var(--nav);color:var(--nav-ink)}
+.modal-h h3{margin:0;font-family:var(--title-font);font-size:19px;letter-spacing:.03em;color:var(--nav-active)}
+.modal-h button{background:transparent;border:0;color:var(--nav-ink);font-size:24px;cursor:pointer;line-height:1}
+.modal-b{padding:16px;display:flex;flex-direction:column;gap:14px}
+.modal-f{padding:12px 16px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.msg{white-space:pre-wrap;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13.5px;max-height:220px;overflow:auto}
+.note{font-size:12.5px;color:var(--muted)}
+.themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.tcard{border:2px solid transparent;border-radius:12px;overflow:hidden;cursor:pointer;text-align:left;padding:0;background:none;color:inherit}
+.tcard.on{border-color:var(--accent)}
+.tcard .sw{height:70px;display:grid;place-items:center;font-size:20px;font-weight:900;letter-spacing:.04em}
+.tcard .tn{padding:6px 10px;font-size:13px;font-weight:600;background:var(--card2)}
+.res-row{display:grid;grid-template-columns:1.6fr .7fr 1fr 1fr .9fr 30px;gap:6px;align-items:center}
+.res-row.cash{grid-template-columns:1.6fr 1fr 1fr .9fr 30px}
+.res-row input,.res-row select{padding:7px 8px;font-size:14px}
+.res-head{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+.xbtn{background:transparent;border:0;color:var(--bad);font-size:20px;cursor:pointer}
+@media (max-width:560px){.res-row,.res-row.cash{grid-template-columns:1fr 1fr;padding:8px;border:1px solid var(--line);border-radius:10px}.res-row .pl{grid-column:1/-1}.res-head{display:none}}
+.chatbox{display:flex;flex-direction:column;gap:8px;max-height:52vh;overflow-y:auto;padding:4px 2px}
+.cm{display:flex;gap:8px;align-items:flex-end;max-width:88%}
+.cm.mine{align-self:flex-end;flex-direction:row-reverse}
+.cm .bub{background:var(--card2);border:1px solid var(--line);border-radius:14px 14px 14px 4px;padding:7px 11px;font-size:14px;word-wrap:break-word;white-space:pre-wrap;min-width:60px}
+.cm.mine .bub{background:var(--accent);color:var(--accent-ink);border-color:transparent;border-radius:14px 14px 4px 14px}
+.cm .meta2{font-size:11px;opacity:.7;margin-bottom:2px;font-weight:700}
+.cm .tm{font-size:10.5px;opacity:.6;margin-left:6px}
+.cm .del{background:none;border:0;color:inherit;opacity:.5;cursor:pointer;font-size:12px;padding:0 0 0 6px}
+.chatin{display:flex;gap:8px;align-items:flex-end}
+.chatin textarea{resize:none;min-height:44px;max-height:120px}
+.dot{display:inline-block;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--accent2);color:#fff;font-size:11px;font-weight:800;line-height:18px;text-align:center}
+.wa-banner{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-radius:14px;padding:12px 14px;margin-bottom:16px;background:linear-gradient(90deg,rgba(37,211,102,.18),transparent);border:1px solid rgba(37,211,102,.55)}
+.wa-banner .ic{font-size:28px}
+.backbar{margin:-4px 0 12px}
+.backbar .btn{border-radius:999px;padding:7px 14px}
+.chip .vt{font-size:10.5px;color:var(--muted);margin-left:2px;font-weight:500}
+.chip .seatno{font-family:'Oswald',sans-serif;font-size:11px;min-width:18px;height:18px;border-radius:9px;background:var(--accent);color:var(--accent-ink);display:inline-grid;place-items:center;padding:0 4px;margin-left:2px}
+.bar.full i{background:linear-gradient(90deg,var(--accent2),#ff4d4d)}
+.fullbar{font-size:13.5px;padding:8px 10px;border-radius:10px;background:rgba(200,16,46,.12);border:1px solid rgba(200,16,46,.45)}
+.mystat{font-size:13.5px;padding:7px 10px;border-radius:10px;font-weight:600}
+.mystat.ok{background:rgba(37,211,102,.14);color:var(--good)}
+.mystat.wait{background:rgba(229,185,85,.16);color:var(--ink)}
+.notice{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-radius:14px;padding:12px 14px;margin-bottom:12px;border:1px solid var(--accent);background:var(--card)}
+.notice.red{border-color:var(--accent2)}.notice.green{border-color:var(--good)}
+.notice .ic{font-size:26px}
+.steps{display:flex;flex-direction:column;gap:8px;margin:0 0 14px;font-size:14px}
+.steps>div{display:flex;gap:10px;align-items:flex-start}
+.steps b:first-child{flex:none;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:12px}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--nav);color:var(--nav-ink);border:1px solid var(--accent);padding:10px 16px;border-radius:12px;z-index:80;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.4);display:none;max-width:90vw}
+.toast.err{border-color:var(--bad)}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:var(--card2);border:1px solid var(--line);color:var(--ink2)}
+.list{display:flex;flex-direction:column;gap:8px}
+.li{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--card2);border:1px solid var(--line);border-radius:10px}
+.li .grow{flex:1;min-width:0}
+.li .t{font-weight:600}
+.loading{padding:40px;text-align:center;color:var(--muted)}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="hero-bg"></div><div class="bats" aria-hidden="true"><span class="bat">🦇</span><span class="bat">🦇</span><span class="bat">🦇</span><span class="bat">🦇</span></div><svg class="web" viewBox="0 0 140 140" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="1"><path d="M140 0 L0 140M140 0 L40 140M140 0 L90 140M140 0 L0 100M140 0 L0 50M140 0 L0 0"/><path d="M110 0 Q118 22 140 30M80 0 Q95 45 140 60M50 0 Q72 68 140 90M20 0 Q50 90 140 120"/></g><text x="112" y="58" font-size="16">🕷</text></svg>
+  <div class="hero-inner">
+    <div class="hero-img" role="img" aria-label="Yedid Poker Cartel Night — cards and chips"></div>
+    <div class="hero-text">
+      <div class="crown">♛</div>
+      <h1 class="title">THE YEDID's POKER CARTEL</h1>
+      <div class="hero-sub"><span class="suits"><span>♠</span><span class="red">♥</span><span class="red">♦</span><span>♣</span></span><span id="heroTag">Members' Lounge · Est. 2026</span></div>
+      <div class="hero-actions" id="heroActions"></div>
+    </div>
+  </div>
+</header>
+<nav class="nav">
+  <div class="wrap">
+    <div class="brand">♠ YEDID's CARTEL</div>
+    <div class="tabs row" style="gap:2px" id="tabs"></div>
+    <div class="spacer"></div>
+    <button class="theme-btn" data-act="themes">🎨 <span>Theme</span></button>
+    <div class="authbox" id="authBox"></div>
+  </div>
+</nav>
+<div class="wrap"><main id="main"><div class="loading">Shuffling up and dealing…</div></main></div>
+<nav class="mnav" id="mnav"></nav>
+<div class="modal-bg" id="modalBg"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+/* ================= CONSTANTS ================= */
+const THEMES={
+  cartel:{name:'Cartel Night',desc:'Your photo — ivory, gold & casino red',sw:'linear-gradient(135deg,#fffaf0,#e6d5ba)',ink:'#b0802a',font:'Cinzel'},
+  felt:{name:'Texas Felt',desc:'Green baize & gold rail',sw:'radial-gradient(circle,#168a4f,#05341c)',ink:'#e5b955',font:'Rye'},
+  highroller:{name:'High Roller',desc:'Black & gold VIP room',sw:'linear-gradient(135deg,#2a2416,#070707)',ink:'#d4af37',font:'Cinzel'},
+  saloon:{name:'Texas Saloon',desc:'Leather, whiskey & wanted posters',sw:'linear-gradient(135deg,#5a3a22,#1d1209)',ink:'#f2bb66',font:'Rye'},
+  halloween:{name:'Halloween Night 🎃',desc:'Pumpkins, bats & potions',sw:'linear-gradient(135deg,#ff7a00 0%,#3a1450 55%,#0b0612 100%)',ink:'#ffd18a',font:'Creepster'},
+  neon:{name:'Vegas Neon',desc:'Strip lights after midnight',sw:'linear-gradient(135deg,#3a0d4f,#06324a)',ink:'#ff5c96',font:'Oswald'}
+};
+const TYPES={
+  nlh_tourney:{label:"Texas Hold'em Tournament",short:"Hold'em Tourney",kind:'tourney',icon:'🏆'},
+  nlh_cash:{label:"Texas Hold'em Cash Game",short:"Hold'em Cash",kind:'cash',icon:'💷'},
+  plo_cash:{label:'Pot-Limit Omaha — Cash',short:'PLO Cash',kind:'cash',icon:'♦'},
+  plo_tourney:{label:'Pot-Limit Omaha — Tournament',short:'PLO Tourney',kind:'tourney',icon:'♦'},
+  omaha_hilo:{label:'Omaha Hi-Lo — Cash',short:'Omaha Hi-Lo',kind:'cash',icon:'♣'},
+  sng:{label:'Sit & Go',short:'Sit & Go',kind:'tourney',icon:'⏱'},
+  bounty:{label:'Bounty / Knockout Tournament',short:'Bounty KO',kind:'tourney',icon:'🎯'},
+  short_deck:{label:'Short Deck (6+) — Cash',short:'Short Deck',kind:'cash',icon:'♠'},
+  stud:{label:'7-Card Stud — Cash',short:'7-Card Stud',kind:'cash',icon:'♥'},
+  dealers:{label:"Dealer's Choice / Mixed — Cash",short:"Dealer's Choice",kind:'cash',icon:'🃏'}
+};
+const VENUES=["The Yedid's Place","Mamo's Place"];
+const VIEWS=[
+  {id:'lobby',label:'Lobby',ic:'♠'},
+  {id:'games',label:'Games',ic:'🃏'},
+  {id:'leaderboard',label:'Rankings',ic:'🏆'},
+  {id:'stats',label:'My Stats',ic:'📈'},
+  {id:'admin',label:'Admin',ic:'♛',admin:true}
+];
+const AV_COLORS=['#b3122a','#1d5c3a','#1f3f8a','#7a4a12','#5b2a86','#0f6e75','#8a1a5c','#3c3c3c','#a0521d','#2a6e1f'];
+
+/* ================= STATE ================= */
+const S={auth:undefined,authLoaded:false,resets:{},resetReqs:{},authMode:null,demoLoggedOut:false,adminSynced:false,
+  db:null,user:null,uid:null,owner:false,canWrite:null,players:{},games:{},votes:{},config:{},
+  loaded:{players:false,games:false,votes:false},live:false,demo:false,noBackend:false,
+  view:'lobby',lbPeriod:'week',statsPid:null,gameFilter:'upcoming',onboarded:false,demoData:null};
+
+/* ================= UTIL ================= */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num=v=>{const n=parseFloat(v);return isFinite(n)?n:0};
+const GBP=n=>{n=Math.round(num(n)*100)/100;const a=Math.abs(n).toLocaleString('en-GB',{minimumFractionDigits:Number.isInteger(Math.abs(n))?0:2,maximumFractionDigits:2});return (n<0?'−£':'£')+a};
+const SGN=n=>(n>0?'+':'')+GBP(n);
+const cls=n=>n>0?'pos':n<0?'neg':'';
+const ord=n=>{if(!n)return '—';const s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0])};
+const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const D=()=>S.demo?S.demoData:{players:S.players,games:S.games,votes:S.votes,config:S.config};
+const ME=()=>S.demo?'me':S.uid;
+const isAdmin=()=>S.demo?true:S.owner;
+function gameDate(g){const d=new Date((g.date||'1970-01-01')+'T'+(g.time||'20:00'));return isNaN(d)?new Date(0):d}
+function fmtDate(g,long){const d=gameDate(g);return d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:long?'numeric':undefined})+(g.time?' · '+g.time:'')}
+function startOf(p,now){const d=new Date(now||Date.now());d.setHours(0,0,0,0);if(p==='week'){d.setDate(d.getDate()-((d.getDay()+6)%7))}else if(p==='month'){d.setDate(1)}else if(p==='year'){d.setMonth(0,1)}else return new Date(0);return d}
+const PLABEL={week:'This week',month:'This month',year:'This year',all:'All time'};
+function pname(pid,short){const p=D().players[pid];if(!p)return 'Unknown player';return short?(p.nick||String(p.name||'').split(' ')[0]||'Player'):(p.name||p.nick||'Player')}
+function initials(pid){const p=D().players[pid]||{};const n=(p.nick||p.name||'?').trim().split(/\s+/);return ((n[0]||'?')[0]+(n[1]?n[1][0]:'')).toUpperCase()}
+function avColor(pid){let h=0;for(const c of String(pid))h=(h*31+c.charCodeAt(0))>>>0;return AV_COLORS[h%AV_COLORS.length]}
+function okPhoto(s){return typeof s==='string'&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(s)}
+function av(pid,lg,xl){const p=D().players[pid]||{};const c=`av${lg?' lg':''}${xl?' xl':''}`;if(okPhoto(p.photo))return `<img class="${c} ph" src="${p.photo}" alt="${esc(p.name||'')}" data-act="zoom" data-p="${esc(pid)}">`;return `<span class="${c}" style="background:${avColor(pid)}">${esc(initials(pid))}</span>`}
+function chip(pid){return `<span class="chip">${av(pid)}${esc(pname(pid,true))}${pid===ME()?' <b>(you)</b>':''}</span>`}
+function waDigits(m){let d=String(m||'').replace(/[^\d+]/g,'');if(d.startsWith('+'))d=d.slice(1);else if(d.startsWith('00'))d=d.slice(2);else if(d.startsWith('0'))d='44'+d.slice(1);return d.replace(/\D/g,'')}
+function appUrl(){return (D().config&&D().config.appUrl)||(/^https?:/.test(location.protocol)?location.origin+location.pathname:'')}
+let toastT;function toast(m,err){const t=$('#toast');t.textContent=m;t.className='toast'+(err?' err':'');t.style.display='block';clearTimeout(toastT);toastT=setTimeout(()=>t.style.display='none',err?6000:2600)}
+function uid8(){return Math.random().toString(36).slice(2,8)+Date.now().toString(36).slice(-4)}
+
+/* ================= THEME ================= */
+function applyTheme(t){if(!THEMES[t])t='cartel';document.documentElement.setAttribute('data-theme',t);const tg=document.getElementById('heroTag');if(tg)tg.textContent=t==='halloween'?'Halloween Night · Trick or Raise 🎃':"Members' Lounge · Est. 2026"}
+function currentTheme(){return lsGet('cartel-theme')||(D().config&&D().config.theme)||'cartel'}
+applyTheme(lsGet('cartel-theme')||'cartel');
+
+/* ================= DATA WRITES ================= */
+async function W(fn,ok){
+  try{await fn();if(ok)toast(ok);return true}
+  catch(e){
+    if(e&&e.code==='permission-denied'){toast("You don't have permission to do that.",true)}
+    else if(e&&(e.code==='resource-exhausted'||e.code==='quota_exceeded')){toast('The free storage limit was reached for today — try again tomorrow.',true)}
+    else if(e&&e.code==='unavailable'){toast('No connection — check your internet and try again.',true)}
+    else toast('Could not save: '+((e&&(e.message||e.code))||'unknown error'),true);
+    return false}
+}
+async function savePlayer(id,data){if(S.demo){S.demoData.players[id]=data;render();return true}const ok=await W(()=>S.db.doc('players/'+id).set(data));if(ok){S.players=Object.assign({},S.players,{[id]:data})}return ok}
+async function deletePlayer(id){if(S.demo){delete S.demoData.players[id];render();return true}return W(()=>S.db.doc('players/'+id).delete(),'Player removed')}
+async function saveGame(id,data){if(S.demo){S.demoData.games[id]=data;render();return true}const ok=await W(()=>S.db.doc('games/'+id).set(data));if(ok){S.games=Object.assign({},S.games,{[id]:data})}return ok}
+async function deleteGame(id){if(S.demo){delete S.demoData.games[id];render();return true}return W(()=>S.db.doc('games/'+id).delete(),'Game deleted')}
+async function saveConfig(data){if(S.demo){S.demoData.config=data;render();return true}return W(()=>S.db.doc('config/app').set(data),'Settings saved')}
+let voteBusy=false;
+async function castVote(gid,val){
+  const id=ME();if(!id){toast('Sign in to vote',true);return}
+  if(!D().players[id]){openProfile(true);return}
+  if(voteBusy)return;voteBusy=true;
+  const prevV=(D().votes[id]||{});const cur=Object.assign({},prevV.g||{});const ts=Object.assign({},prevV.ts||{});
+  if(cur[gid]===val){delete cur[gid];delete ts[gid]}else{cur[gid]=val;ts[gid]=Date.now()}
+  const before=attendees(gid);const doc={g:cur,ts,t:Date.now()};
+  if(S.demo){S.demoData.votes[id]=doc}else{S.votes=Object.assign({},S.votes,{[id]:doc})}
+  const after=attendees(gid);lsSet('cartel-st-'+gid,after.seated.includes(id)?'seat':after.wait.includes(id)?'wait':'');
+  render();
+  let msg=null;if(cur[gid]==='in'){const w=after.wait.indexOf(id);msg=w>=0?`Table's full — you're #${w+1} on the waiting list ⏳`:"You're in! 🃏"}
+  else if(before.seated.includes(id)&&before.wait.length)msg=`Seat released — ${pname(before.wait[0],true)} moves up from the waiting list`;
+  if(S.demo){voteBusy=false;if(msg)toast(msg);return}
+  await W(()=>S.db.doc('votes/'+id).set(doc),msg);
+  voteBusy=false;
+}
+
+/* ================= STATS ================= */
+function voteTime(pid,gid){const v=D().votes[pid]||{};return num((v.ts||{})[gid])||num(v.t)||0}
+function attendees(gid){const r={in:[],maybe:[],out:[]};const P=D().players;for(const [pid,v] of Object.entries(D().votes||{})){const x=v&&v.g&&v.g[gid];if(r[x]&&P[pid])r[x].push(pid)}
+  const by=(a,b)=>voteTime(a,gid)-voteTime(b,gid)||(a<b?-1:1);r.in.sort(by);r.maybe.sort(by);r.out.sort(by);
+  const g=D().games[gid]||{};const max=parseInt(g.maxSeats,10)||0;r.max=max;r.seated=max?r.in.slice(0,max):r.in.slice();r.wait=max?r.in.slice(max):[];r.full=!!max&&r.in.length>=max;return r}
+function vtime(pid,gid){const t=voteTime(pid,gid);return t?new Date(t).toLocaleString('en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):''}
+function chipT(pid,gid,n){const t=vtime(pid,gid);return `<span class="chip">${n?`<b class="seatno">${n}</b>`:''}${av(pid)}${esc(pname(pid,true))}${pid===ME()?' <b>(you)</b>':''}${t?`<span class="vt">${esc(t)}</span>`:''}</span>`}
+function fullText(gid){const g=D().games[gid];const a=attendees(gid);const u=appUrl();return `♠♥ THE YEDID's POKER CARTEL ♦♣\n\n🔴 TABLE FULL — ${g.title}\n📅 ${fmtDate(g,true)}${g.venue?'\n📍 '+g.venue:''}\n\nAll ${a.max} seats are taken:\n${a.seated.map((p,i)=>(i+1)+'. '+pname(p)).join('\n')}\n${a.wait.length?'\n⏳ Waiting list:\n'+a.wait.map((p,i)=>(i+1)+'. '+pname(p)).join('\n')+'\n':''}\nWant in? Vote “I'm in” in the app to join the waiting list — if anyone drops out, seats go in order of the waiting list.\n${u}`}
+function allEntries(){const out=[];for(const [gid,g] of Object.entries(D().games||{})){if(!g||g.status!=='completed'||!Array.isArray(g.results))continue;const t=TYPES[g.type]||{kind:'cash'};const dt=gameDate(g);for(const r of g.results){if(!r||!r.pid)continue;const i=num(r.buyin),o=num(r.cashout);out.push({gid,g,kind:t.kind,pid:r.pid,pos:r.pos?parseInt(r.pos,10):null,i,o,net:o-i,dt})}}return out.sort((a,b)=>a.dt-b.dt)}
+function inPeriod(e,p){return p==='all'||e.dt>=startOf(p)}
+function aggregate(entries){const m={};for(const e of entries){const a=m[e.pid]||(m[e.pid]={pid:e.pid,games:0,net:0,i:0,o:0,wins:0,itm:0,best:null,tourneys:0,cash:0,cashNet:0,tNet:0,posSum:0,posN:0,biggest:null});a.games++;a.net+=e.net;a.i+=e.i;a.o+=e.o;if(a.biggest===null||e.net>a.biggest)a.biggest=e.net;if(e.kind==='tourney'){a.tourneys++;a.tNet+=e.net;if(e.pos){a.posSum+=e.pos;a.posN++;if(e.pos===1)a.wins++;if(a.best===null||e.pos<a.best)a.best=e.pos}if(e.o>0)a.itm++}else{a.cash++;a.cashNet+=e.net}}return Object.values(m).filter(a=>D().players[a.pid]).sort((x,y)=>y.net-x.net||y.wins-x.wins||y.games-x.games)}
+function standings(p){return aggregate(allEntries().filter(e=>inPeriod(e,p)))}
+
+/* ================= RENDER: SHELL ================= */
+function setView(v){S.view=v;render();window.scrollTo({top:Math.min(window.scrollY,document.querySelector('.hero').offsetHeight),behavior:'smooth'})}
+/* ================= AUTH (Firebase email + password) ================= */
+const ADMIN_EMAIL=String(window.CARTEL_ADMIN_EMAIL||'').trim().toLowerCase();
+function isAdminUser(u){return !!u&&!!ADMIN_EMAIL&&String(u.email||'').toLowerCase()===ADMIN_EMAIL&&!!u.emailVerified}
+function adminNeedsVerify(){return !S.demo&&S.fbUser&&String(S.fbUser.email||'').toLowerCase()===ADMIN_EMAIL&&!S.fbUser.emailVerified}
+function authState(){
+  if(S.demo)return S.demoLoggedOut?'signedout':'in';
+  if(!S.live||!S.authReady)return 'loading';
+  if(!S.fbUser)return 'signedout';
+  if(S.signingUp)return 'loading';
+  if(!S.loaded.players)return 'loading';
+  if(!S.players[S.uid])return 'register';
+  return 'in';
+}
+const authed=()=>authState()==='in';
+const PW_WORDS=['Ace','King','Queen','Jack','River','Turn','Flop','Bluff','AllIn','Chip','Royal','Flush','Straight','Pocket','Raise','Check','Shark','Nuts','Bounty','Felt','Joker','Spade','Heart','Diamond','Club','Dealer','Blind','Stack','Cartel'];
+function genPw(){const r=n=>crypto.getRandomValues(new Uint32Array(1))[0]%n;const sym='!#$%&*?';return PW_WORDS[r(PW_WORDS.length)]+'-'+PW_WORDS[r(PW_WORDS.length)].toLowerCase()+'-'+(10+r(90))+sym[r(sym.length)]}
+function pwField(id,ph,ac){return `<span class="pw"><input id="${id}" type="password" placeholder="${ph}" autocomplete="${ac}"><button type="button" class="eye" data-act="pw-eye" data-for="${id}">Show</button></span>`}
+function fbErr(e){const c=(e&&e.code)||'';return ({
+  'auth/email-already-in-use':'That email already has an account — tap “Log in” instead (or “Forgot password?”).',
+  'auth/invalid-email':'That email address doesn\'t look right.',
+  'auth/weak-password':'Password is too weak — use at least 8 characters.',
+  'auth/wrong-password':'Wrong email or password.','auth/invalid-credential':'Wrong email or password.','auth/invalid-login-credentials':'Wrong email or password.',
+  'auth/user-not-found':'No account with that email — tap “Sign up” to join.',
+  'auth/too-many-requests':'Too many attempts — wait a few minutes or reset your password.',
+  'auth/network-request-failed':'No internet connection — check your signal and try again.',
+  'auth/requires-recent-login':'For security, log out and back in, then try again.',
+  'permission-denied':'You don\'t have permission to do that.'
+})[c]||((e&&e.message)||'Something went wrong — please try again.')}
+function profileFields(p,withEmail){p=p||{};return `
+   <div class="photo-pick"><div id="pf_prev">${previewAv(ME()||'new',p.photo)}</div><div style="flex:1;min-width:200px"><div class="small" style="font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink2);margin-bottom:6px">Your photo</div><div class="btns">
+     <label class="btn sm gold">📷 Take photo<input type="file" id="pf_cam" accept="image/*" capture="user"></label>
+     <label class="btn sm">🖼 Upload<input type="file" id="pf_file" accept="image/*"></label>
+     <button type="button" class="btn sm ghost" data-act="pf-remove" ${okPhoto(p.photo)?'':'hidden'} id="pf_rm">Remove</button></div>
+     <div class="note" style="margin-top:6px">Optional — on a phone “Take photo” opens your camera.</div></div></div>
+   <div class="fgrid">
+    <label class="f full">Full name *<input id="pf_name" value="${esc(p.name||'')}" autocomplete="name" placeholder="e.g. Avi Cohen"></label>
+    <label class="f">Table nickname<input id="pf_nick" value="${esc(p.nick||'')}" placeholder="e.g. The Shark"></label>
+    <label class="f">Mobile (WhatsApp) *<input id="pf_mobile" type="tel" value="${esc(p.mobile||'')}" autocomplete="tel" placeholder="+44 7…"></label>
+    ${withEmail?`<label class="f full">Email *<input id="pf_email" type="email" value="${esc(p.email||'')}" autocomplete="email" placeholder="you@example.com"></label>`:`<input type="hidden" id="pf_email" value="${esc(p.email||(S.fbUser&&S.fbUser.email)||'')}">`}
+    <label class="f check full"><input type="checkbox" id="pf_wa" ${p.notifyWA===false?'':'checked'}> Send me game polls & weekly updates on WhatsApp</label>
+    <label class="f check full"><input type="checkbox" id="pf_em" ${p.notifyEmail===false?'':'checked'}> Send me game polls & weekly updates by email</label>
+   </div>`}
+function authScreen(st){
+  const mode=S.authMode;
+  if(st==='register')return `<div class="card auth-card" style="max-width:560px"><h2>Finish your profile</h2><p class="lead">You're logged in as <b>${esc(S.fbUser&&S.fbUser.email||'')}</b>. Add your details so the crew knows who you are.</p><form novalidate data-form="complete" style="gap:14px">${profileFields({email:S.fbUser&&S.fbUser.email},false)}<button class="btn gold" type="submit">♠ Enter the Cartel</button></form><button class="linkbtn" data-act="logout">Log out</button></div>`;
+  if(mode==='signup')return `<div class="card auth-card" style="max-width:560px"><h2>Join the Cartel</h2><p class="lead">Create your account — you'll use your <b>email + password</b> to log in from now on.</p><form novalidate data-form="signup" style="gap:14px">${profileFields({},true)}
+     <div class="fgrid"><label class="f">Choose a password *${pwField('su_pw1','Min 8 characters','new-password')}</label><label class="f">Confirm password *${pwField('su_pw2','Type it again','new-password')}</label></div>
+     <button type="button" class="linkbtn" data-act="pw-gen" style="align-self:flex-start;padding:0">🎲 Suggest a strong password for me</button><div class="note" id="su_gen" hidden></div>
+     <button class="btn gold" type="submit" style="font-size:16px;padding:13px">♠ Create my account</button></form>
+     <div class="note" style="text-align:center;margin-top:10px">Already have an account? <button class="linkbtn" data-act="auth-mode" data-v="login" style="padding:0">Log in</button></div></div>`;
+  if(mode==='login')return `<div class="card auth-card"><h2>Log in</h2><p class="lead">Welcome back — enter your email and password.</p><form novalidate data-form="login"><input id="li_email" type="email" placeholder="Email" autocomplete="email" value="${esc(lsGet('cartel-last-email')||'')}">${pwField('li_pw','Password','current-password')}<label class="f check"><input type="checkbox" id="li_rem" checked> Keep me logged in on this device</label><button class="btn gold" type="submit">🔑 Log in</button></form><button class="linkbtn" data-act="auth-mode" data-v="forgot">Forgot my password?</button><div class="note" style="text-align:center">New here? <button class="linkbtn" data-act="auth-mode" data-v="signup" style="padding:0">Sign up</button></div>${S.demo?'<div class="note" style="text-align:center">Preview: any email & password works.</div>':''}</div>`;
+  if(mode==='forgot')return `<div class="card auth-card"><h2>Forgot password</h2><p class="lead">Enter your email and we'll send you a link to choose a new password.</p><form novalidate data-form="forgot"><input id="fp_email" type="email" placeholder="Your email" autocomplete="email" value="${esc(lsGet('cartel-last-email')||'')}"><button class="btn gold" type="submit">📧 Email me a reset link</button></form><button class="linkbtn" data-act="auth-mode" data-v="login">← Back to log in</button></div>`;
+  if(mode==='forgot-sent')return `<div class="card auth-card"><h2>Check your inbox 📬</h2><p class="lead">If <b>${esc(S.fpEmail||'')}</b> has an account, a password-reset email is on its way. Open it, choose a new password, then come back and log in.</p><div class="note" style="text-align:center">Can't see it after a few minutes? Check your <b>spam / junk</b> folder.</div><button class="btn gold" data-act="auth-mode" data-v="login" style="width:100%;margin-top:12px">🔑 Back to log in</button></div>`;
+  return `<div class="card auth-card"><div style="text-align:center;font-size:40px;line-height:1">♠ <span class="red">♥ ♦</span> ♣</div><h2>Welcome to the Cartel</h2><p class="lead">The private poker lounge for the crew — game polls, who's playing, live rankings and your own stats.</p><button class="btn gold" data-act="auth-mode" data-v="signup" style="width:100%;font-size:16px;padding:13px">🆕 New here? Sign up</button><div class="note" style="text-align:center;margin:6px 0 12px">Takes a minute: name, mobile, email, photo & your own password.</div><button class="btn" data-act="auth-mode" data-v="login" style="width:100%">🔑 Already a member? Log in</button></div>`;
+}
+function renderAuthBox(st){
+  const box=$('#authBox');if(!box)return;const me=ME()&&D().players[ME()];
+  if(st==='in')box.innerHTML=`<span class="abwho">${me?av(ME()):''}<span class="nm">${me?esc(me.nick||String(me.name||'').split(' ')[0]):''}</span></span><button class="nbtn" data-act="logout">Log out</button>`;
+  else if(st==='signedout')box.innerHTML=S.authMode==='login'?`<button class="nbtn gold" data-act="auth-mode" data-v="signup">🆕 Sign up</button>`:`<button class="nbtn gold" data-act="auth-mode" data-v="login">🔑 Log in</button>`;
+  else if(st==='register')box.innerHTML=`<button class="nbtn" data-act="logout">Log out</button>`;
+  else box.innerHTML='';
+}
+function busy(form,on,label){const b=document.querySelector(`[data-form=${form}] button[type=submit]`);if(b){if(on){b.dataset.l=b.textContent;b.textContent=label||'Please wait…'}else if(b.dataset.l)b.textContent=b.dataset.l;b.disabled=!!on}}
+async function doLogin(){const em=val('li_email'),pw=val('li_pw');if(!em||!pw)return toast('Enter your email and password',true);lsSet('cartel-last-email',em);
+  if(S.demo){S.demoLoggedOut=false;S.authMode=null;$('#main').dataset.k='';render();return toast('Welcome back 🃏')}
+  busy('login',true,'Logging in…');
+  try{const P=firebase.auth.Auth.Persistence;await S.auth.setPersistence($('#li_rem')&&$('#li_rem').checked?P.LOCAL:P.SESSION);await S.auth.signInWithEmailAndPassword(em,pw);S.authMode=null;toast('Welcome back 🃏')}
+  catch(e){busy('login',false);toast(fbErr(e),true);const i=$('#li_pw');if(i){i.value='';i.focus()}}}
+async function doForgot(){const em=val('fp_email');if(!/^\S+@\S+\.\S+$/.test(em))return toast('Enter the email you signed up with',true);lsSet('cartel-last-email',em);
+  if(S.demo){S.fpEmail=em;S.authMode='forgot-sent';$('#main').dataset.k='';return render()}
+  busy('forgot',true,'Sending…');
+  try{await S.auth.sendPasswordResetEmail(em,{url:location.origin+location.pathname})}catch(e){if(!/user-not-found/.test(e&&e.code||'')){busy('forgot',false);return toast(fbErr(e),true)}}
+  S.fpEmail=em;S.authMode='forgot-sent';$('#main').dataset.k='';render()}
+async function doSignup(){const c=collectProfile();if(!c)return;const a=val('su_pw1'),b=val('su_pw2');
+  if(a.length<8)return toast('Password must be at least 8 characters',true);if(a!==b)return toast("The two passwords don't match",true);lsSet('cartel-last-email',c.email);
+  if(S.demo){S.demoLoggedOut=false;S.authMode=null;await writeProfile('me',c);$('#main').dataset.k='';render();return toast('Welcome to the Cartel! 🃏')}
+  busy('signup',true,'Creating your account…');S.signingUp=true;
+  try{const cred=await S.auth.createUserWithEmailAndPassword(c.email,a);S.uid=cred.user.uid;S.fbUser=cred.user;
+    if(String(c.email).toLowerCase()===ADMIN_EMAIL)cred.user.sendEmailVerification({url:location.origin+location.pathname}).catch(()=>{});
+    const ok=await writeProfile(S.uid,c);S.signingUp=false;S.authMode=null;
+    if(ok){S.players=Object.assign({},S.players,{[S.uid]:Object.assign({},c)});toast('Welcome to the Cartel! 🃏');if(waGroup())setTimeout(openJoinGroup,600)}
+    $('#main').dataset.k='';render();
+  }catch(e){S.signingUp=false;busy('signup',false);toast(fbErr(e),true)}}
+async function doComplete(){const c=collectProfile();if(!c)return;busy('complete',true,'Saving…');const ok=await writeProfile(S.uid,c);if(ok){S.players=Object.assign({},S.players,{[S.uid]:c});$('#main').dataset.k='';render();toast('Welcome to the Cartel! 🃏');if(waGroup())setTimeout(openJoinGroup,600)}else busy('complete',false)}
+async function resendVerify(){try{await S.fbUser.sendEmailVerification({url:location.origin+location.pathname});toast('Verification email sent — check your inbox 📬')}catch(e){toast(fbErr(e),true)}}
+async function recheckVerify(){try{await S.fbUser.reload();S.fbUser=S.auth.currentUser;await S.fbUser.getIdToken(true);S.owner=isAdminUser(S.fbUser);render();toast(S.owner?'Verified ✓ — admin unlocked ♛':'Not verified yet — open the link in the email first',!S.owner)}catch(e){toast(fbErr(e),true)}}
+
+function renderNav(){
+  const vs=VIEWS.filter(v=>!v.admin||isAdmin());
+  $('#tabs').innerHTML=vs.map(v=>`<a href="#${v.id}" class="tab${S.view===v.id?' on':''}">${v.ic} ${v.label}</a>`).join('');
+  $('#mnav').innerHTML=vs.map(v=>`<a href="#${v.id}" class="${S.view===v.id?'on':''}"><span class="ic">${v.ic}</span>${v.label}</a>`).join('');
+  const meP=D().players[ME()];
+  let h='';
+  if(meP)h+=`<span class="hero-me">${av(ME(),true)}<span>Welcome, ${esc(meP.nick||String(meP.name||'').split(' ')[0])}</span></span><button class="btn sm" data-act="profile">${okPhoto(meP.photo)?'Edit profile':'📷 Add photo'}</button>`;
+  else if(S.live&&S.uid)h+=`<button class="btn gold" data-act="register">♠ Join the Cartel</button>`;
+  if(isAdmin()&&!S.demo)h+=`<button class="btn sm gold" data-act="newgame">＋ New game</button>`;
+  $('#heroActions').innerHTML=h;
+}
+function banners(){
+  let h='';
+  if(S.demo)h+=`<div class="banner">🃏 <span><b>Preview mode</b> — showing sample players and results so you can see the layout. Nothing here is saved.</span>${S.noBackend?'':'<button class="btn sm" data-act="demo-off">Back to live data</button>'}</div>`;
+  else if(adminNeedsVerify())h+=`<div class="banner">♛ <span><b>Verify your email to unlock Admin.</b> We sent a link to ${esc(S.fbUser.email)} — open it, then tap “I've verified”.</span><button class="btn sm gold" data-act="verify-check">I've verified</button><button class="btn sm" data-act="verify-send">Resend email</button></div>`;
+  return h;
+}
+function render(){
+  if(!S.live&&!S.demo){return}
+  const st=authState();renderAuthBox(st);
+  if(st!=='in'){
+    document.body.classList.add('locked');applyTheme(currentTheme());$('#heroActions').innerHTML='';$('#tabs').innerHTML='';$('#mnav').innerHTML='';
+    const k='auth:'+st+':'+(S.authMode||'')+':'+(S.uid||'');
+    if($('#main').dataset.k===k)return;
+    $('#main').dataset.k=k;$('#main').innerHTML=(S.demo?banners():'')+(st==='loading'?'<div class="loading">Shuffling up and dealing…</div>':authScreen(st));
+    const f=$('#main').querySelector('#li_email:placeholder-shown,input[type=password],#pf_name');if(f&&window.innerWidth>720)setTimeout(()=>f.focus(),60);
+    return;
+  }
+  document.body.classList.remove('locked');$('#main').dataset.k='';try{checkPromotion()}catch(e){}
+  const v=VIEWS.find(x=>x.id===S.view&&(!x.admin||isAdmin()))?S.view:'lobby';S.view=v;
+  applyTheme(currentTheme());
+  renderNav();
+  let body='';
+  try{body=({lobby:vLobby,games:vGames,leaderboard:vBoard,stats:vStats,admin:vAdmin})[v]()}catch(e){console.error(e);body='<div class="empty">Something went wrong drawing this page.</div>'}
+  const VL={lobby:'Lobby',games:'Games',leaderboard:'Rankings',stats:'My Stats',admin:'Admin'};const prevV=HIST.length?HIST[HIST.length-1]:'lobby';
+  const backBar=v!=='lobby'?`<div class="backbar"><button class="btn sm" data-act="back">← Back<span class="muted small" style="font-weight:500">&nbsp;to ${esc(VL[prevV]||'Lobby')}</span></button></div>`:'';
+  $('#main').innerHTML=backBar+banners()+body;
+  wireChart();
+}
+
+/* ================= GAME CARD ================= */
+function gameCard(gid,g){
+  const t=TYPES[g.type]||{short:g.type||'Game',kind:'cash',icon:'🃏'};
+  const a=attendees(gid);const my=((D().votes[ME()]||{}).g||{})[gid];
+  const max=a.max;const pct=max?Math.min(100,a.seated.length/max*100):0;const myWait=a.wait.indexOf(ME()),mySeat=a.seated.indexOf(ME());
+  const stLabel={open:'Poll open',closed:'Poll closed',completed:'Completed'}[g.status]||g.status;
+  let h=`<div class="gc"><div class="gc-top"><span class="badge ${t.kind}">${t.icon} ${esc(t.short)}</span><span class="status st-${esc(g.status)}">${esc(stLabel)}</span></div><div class="gc-body">`;
+  h+=`<h3>${esc(g.title||t.label)}</h3><div class="meta"><span>📅 ${esc(fmtDate(g))}</span>${g.venue?`<span>📍 ${esc(g.venue)}</span>`:''}${g.buyIn?`<span>💷 Buy-in ${GBP(g.buyIn)}</span>`:''}${g.blinds?`<span>🪙 ${esc(g.blinds)}</span>`:''}${g.rebuys?`<span>🔁 ${esc(g.rebuys)}</span>`:''}${g.maxSeats?`<span>🃏 ${esc(seatText(g))}</span>`:''}<span>🤵 ${esc(dealerText(g,true))}</span>${g.hostFee?`<span>🏠 Hosting ${GBP2(g.hostFee)} pp</span>`:''}</div>`;
+  if(g.notes)h+=`<div class="small muted">${esc(g.notes)}</div>`;
+  {const cn=chatFor(gid).length,un=unread(gid);h+=`<div class="row" style="gap:6px"><button class="btn sm" data-act="chat" data-g="${esc(gid)}">💬 Game chat${cn?' · '+cn:''} ${un?`<span class="dot">${un}</span>`:''}</button>${waGroup()?`<a class="btn sm wa" href="${esc(waGroup())}" target="_blank" rel="noopener">WhatsApp group</a>`:''}</div>`}
+  if(g.status==='completed'){
+    const res=(g.results||[]).filter(r=>D().players[r.pid]);
+    if(t.kind==='tourney'){const top=res.filter(r=>r.pos).sort((x,y)=>x.pos-y.pos).slice(0,3);h+=`<div class="winner">${top.map(r=>`${['🥇','🥈','🥉'][r.pos-1]||ord(r.pos)} <b>${esc(pname(r.pid,true))}</b> <span class="pos">${num(r.cashout)?GBP(r.cashout):''}</span>`).join(' &nbsp; ')||'<span class="muted">No positions entered</span>'}</div>`}
+    else{const top=res.map(r=>({pid:r.pid,net:num(r.cashout)-num(r.buyin)})).sort((x,y)=>y.net-x.net).slice(0,3);h+=`<div class="winner">${top.map((r,i)=>`${['🥇','🥈','🥉'][i]} <b>${esc(pname(r.pid,true))}</b> <span class="${cls(r.net)}">${SGN(r.net)}</span>`).join(' &nbsp; ')}</div>`}
+    h+=`<div class="small muted">${res.length} players · <a href="#leaderboard">see rankings</a></div>`;
+  }else{
+    h+=`<div class="seats"><div class="bar${a.full?' full':''}"><i style="width:${max?pct:Math.min(100,a.in.length*10)}%"></i></div><b>${a.seated.length}${max?' / '+max:''}</b> seated${a.wait.length?` · <b>${a.wait.length}</b> waiting`:''}</div>`;
+    if(a.full)h+=`<div class="fullbar">🔴 <b>Table full</b> — no seats left.${g.status==='open'&&my!=='in'?' Vote “I\'m in” to join the waiting list.':''}</div>`;
+    if(mySeat>=0)h+=`<div class="mystat ok">✅ You've got seat #${mySeat+1}${nTables(g)>1&&perTable(g)?' · Table '+(Math.floor(mySeat/perTable(g))+1):''}</div>`;
+    else if(myWait>=0)h+=`<div class="mystat wait">⏳ You're <b>#${myWait+1}</b> on the waiting list — you'll move up automatically if someone drops out.</div>`;
+    if(g.status==='open'){
+      h+=`<div class="votes">${[['in',a.full&&my!=='in'?'⏳ Join waiting list':(myWait>=0?'⏳ On waiting list':"✋ I'm in")],['maybe','🤔 Maybe'],['out','✖ Out']].map(([k,l])=>`<button class="vbtn ${k}${my===k?' on':''}" data-act="vote" data-g="${esc(gid)}" data-v="${k}">${l}</button>`).join('')}</div>`;
+    }
+    const nt=nTables(g),pt=perTable(g);let seatedHtml;
+    if(nt>1&&pt&&a.seated.length){seatedHtml='';for(let t=0;t<nt;t++){const grp=a.seated.slice(t*pt,(t+1)*pt);seatedHtml+=`<div class="chips"><span class="lbl">Table ${t+1}</span>${grp.length?grp.map((p,i)=>chipT(p,gid,t*pt+i+1)).join(''):'<span class="muted small">empty</span>'}<span class="muted small">${grp.length}/${pt}</span></div>`}}
+    else seatedHtml=`<div class="chips"><span class="lbl">${max?'Seated':'In'}</span>${a.seated.length?a.seated.map((p,i)=>chipT(p,gid,max?i+1:0)).join(''):'<span class="muted small">Nobody yet — be first</span>'}</div>`;
+    h+=`<div class="who">${seatedHtml}${a.wait.length?`<div class="chips"><span class="lbl">⏳ Waiting list</span>${a.wait.map((p,i)=>chipT(p,gid,'W'+(i+1))).join('')}</div>`:''}${a.maybe.length?`<div class="chips"><span class="lbl">Maybe</span>${a.maybe.map(p=>chipT(p,gid)).join('')}</div>`:''}${a.out.length?`<div class="chips"><span class="lbl">Out</span>${a.out.map(p=>chipT(p,gid)).join('')}</div>`:''}</div>`;
+  }
+  if(isAdmin()){
+    h+=`<div class="admin-row">`;
+    if(g.status!=='completed')h+=`<button class="btn sm gold" data-act="sendpoll" data-g="${esc(gid)}">📣 Send poll</button>`;
+    if(g.status!=='completed'&&a.full)h+=`<button class="btn sm red" data-act="announce-full" data-g="${esc(gid)}">🔴 Announce table full</button>`;
+    h+=`<button class="btn sm" data-act="results" data-g="${esc(gid)}">🏁 ${g.status==='completed'?'Edit results':'Enter results'}</button>`;
+    if(g.status==='open')h+=`<button class="btn sm" data-act="close" data-g="${esc(gid)}">🔒 Close poll</button>`;
+    if(g.status==='closed')h+=`<button class="btn sm" data-act="reopen" data-g="${esc(gid)}">🔓 Reopen</button>`;
+    h+=`<button class="btn sm" data-act="editgame" data-g="${esc(gid)}">✎ Edit</button><button class="btn sm ghost" data-act="delgame" data-g="${esc(gid)}" style="color:var(--bad)">🗑 Delete</button></div>`;
+  }
+  return h+`</div></div>`;
+}
+function sortedGames(filter){
+  const now=Date.now()-6*3600e3;
+  return Object.entries(D().games||{}).filter(([id,g])=>{if(!g)return false;
+    if(filter==='upcoming')return g.status!=='completed';
+    if(filter==='completed')return g.status==='completed';return true})
+   .sort((a,b)=>filter==='completed'||filter==='all'?gameDate(b[1])-gameDate(a[1]):gameDate(a[1])-gameDate(b[1]));
+}
+
+/* ================= PODIUM ================= */
+function podium(rows){
+  if(!rows.length)return '';
+  const slot=(r,p)=>r?`<div class="pod p${p}"><span class="medal">${['🥇','🥈','🥉'][p-1]}</span>${av(r.pid,true)}<div class="name">${esc(pname(r.pid,true))}</div><div class="amt ${cls(r.net)}">${SGN(r.net)}</div><div class="step">${p}</div></div>`:'<div></div>';
+  return `<div class="podium">${slot(rows[1],2)}${slot(rows[0],1)}${slot(rows[2],3)}</div>`;
+}
+
+/* ================= VIEWS ================= */
+function vLobby(){
+  const P=D().players,me=ME();const pc=Object.keys(P).length;
+  const up=sortedGames('upcoming');const open=up.filter(([,g])=>g.status==='open');
+  const next=up[0];
+  const yr=standings('year').find(r=>r.pid===me);
+  let week=standings('week'),wl='This week';if(!week.length){week=standings('month');wl='This month';}
+  let h=`<div class="kpis">
+   <div class="kpi" data-suit="♠"><div class="lab">Cartel members</div><div class="val">${pc}</div><div class="sub">registered players</div></div>
+   <div class="kpi" data-suit="♥"><div class="lab">Open polls</div><div class="val">${open.length}</div><div class="sub">${open.length?'vote below':'no games on yet'}</div></div>
+   <div class="kpi" data-suit="♦"><div class="lab">Next game</div><div class="val" style="font-size:20px;padding-top:6px">${next?esc(gameDate(next[1]).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})):'—'}</div><div class="sub">${next?esc((TYPES[next[1].type]||{}).short||''):'awaiting the boss'}</div></div>
+   <div class="kpi" data-suit="♣"><div class="lab">Your net · ${new Date().getFullYear()}</div><div class="val ${yr?cls(yr.net):''}">${yr?SGN(yr.net):'£0'}</div><div class="sub">${yr?yr.games+' games played':'no games yet'}</div></div>
+  </div>`;
+  if(!S.demo&&!Object.keys(D().games).length&&!pc){h+=`<div class="banner">👀 <span>The table is empty for now. Want to see how it looks with a few weeks of games?</span><button class="btn sm gold" data-act="demo-on">Preview with sample data</button></div>`}
+  h+=noticesHtml();
+  if(waGroup()&&!lsGet('cartel-wa-joined'))h+=`<div class="wa-banner"><span class="ic">💬</span><div style="flex:1;min-width:200px"><b>Join our WhatsApp group — “The Yedid's Poker Cartel”</b><div class="small muted">Game alerts, banter and weekly standings for all members.</div></div><a class="btn wa" href="${esc(waGroup())}" target="_blank" rel="noopener" data-act="wa-joined">Join the group</a><button class="btn sm ghost" data-act="wa-joined">I'm already in</button></div>`;
+  h+=`<div class="grid g2"><section><div class="sec-h"><h2>Games on offer</h2><a class="btn sm" href="#games">All games →</a></div>`;
+  h+=up.length?`<div class="games">${up.slice(0,4).map(([id,g])=>gameCard(id,g)).join('')}</div>`:`<div class="empty card"><span class="big">🂠</span>No games scheduled yet.${isAdmin()?'<div style="margin-top:10px"><button class="btn gold" data-act="newgame">＋ Publish a game</button></div>':' The admin will post the next one soon.'}</div>`;
+  h+=`</section><section class="grid" style="align-content:start"><div class="card"><div class="sec-h"><h2>Top 3 · ${wl}</h2><a class="btn sm" href="#leaderboard">Full table</a></div>${week.length?podium(week):'<div class="empty"><span class="big">🏆</span>No results yet — the podium is waiting.</div>'}</div>`;
+  const recent=sortedGames('completed').slice(0,4);
+  h+=`<div class="card"><div class="sec-h"><h2>Recent results</h2></div>${recent.length?`<div class="list">${recent.map(([id,g])=>{const t=TYPES[g.type]||{};const res=(g.results||[]).filter(r=>D().players[r.pid]);let w;if(t.kind==='tourney'){const r=res.find(r=>+r.pos===1);w=r?`🥇 ${esc(pname(r.pid,true))}`:''}else{const r=res.map(r=>({pid:r.pid,net:num(r.cashout)-num(r.buyin)})).sort((a,b)=>b.net-a.net)[0];w=r?`💰 ${esc(pname(r.pid,true))} <span class="pos">${SGN(r.net)}</span>`:''}const mine=res.find(r=>r.pid===me);const mn=mine?num(mine.cashout)-num(mine.buyin):null;return `<div class="li"><span style="font-size:20px">${t.icon||'🃏'}</span><div class="grow"><div class="t">${esc(g.title||t.label)}</div><div class="small muted">${esc(fmtDate(g))} · ${w}</div></div>${mn!==null?`<div class="num ${cls(mn)}" style="font-family:Oswald">${SGN(mn)}</div>`:''}</div>`}).join('')}</div>`:'<div class="empty">No completed games yet.</div>'}</div></section></div>`;
+  return h;
+}
+function vGames(){
+  const f=S.gameFilter;const list=sortedGames(f);
+  let h=noticesHtml()+`<div class="sec-h"><h2>Games & polls</h2><div class="row"><div class="tabs-inline">${[['upcoming','Upcoming'],['completed','Completed'],['all','All']].map(([k,l])=>`<button class="${f===k?'on':''}" data-act="gfilter" data-v="${k}">${l}</button>`).join('')}</div>${isAdmin()?'<button class="btn gold sm" data-act="newgame">＋ New game</button>':''}</div></div>`;
+  h+=list.length?`<div class="games">${list.map(([id,g])=>gameCard(id,g)).join('')}</div>`:`<div class="empty card"><span class="big">🂠</span>${f==='completed'?'No completed games yet.':'No upcoming games.'}</div>`;
+  return h;
+}
+function vBoard(){
+  const p=S.lbPeriod;const rows=standings(p);const me=ME();
+  let h=`<div class="sec-h"><h2>Rankings</h2><div class="tabs-inline">${['week','month','year','all'].map(k=>`<button class="${p===k?'on':''}" data-act="lbp" data-v="${k}">${PLABEL[k]}</button>`).join('')}</div></div>`;
+  if(!rows.length)return h+`<div class="empty card"><span class="big">🏆</span>No results recorded for ${PLABEL[p].toLowerCase()} yet.</div>`;
+  h+=`<div class="grid g2"><div class="card"><div class="tbl-wrap"><table><thead><tr><th>#</th><th>Player</th><th class="num">Net</th><th class="num">Games</th><th class="num">Wins</th><th class="num">Best</th><th class="num">Cash net</th><th class="num">Tourney net</th></tr></thead><tbody>`;
+  rows.forEach((r,i)=>{h+=`<tr class="${r.pid===me?'me':''}"><td class="rank">${i<3?['🥇','🥈','🥉'][i]:i+1}</td><td>${isAdmin()?`<a href="#stats" data-act="viewplayer" data-p="${esc(r.pid)}" style="color:inherit;text-decoration:none;display:flex;align-items:center;gap:8px">${av(r.pid)}<b>${esc(pname(r.pid))}</b></a>`:`<span style="display:flex;align-items:center;gap:8px">${av(r.pid)}<b>${esc(pname(r.pid))}</b></span>`}</td><td class="num ${cls(r.net)}">${SGN(r.net)}</td><td class="num">${r.games}</td><td class="num">${r.wins}</td><td class="num">${r.best?ord(r.best):'—'}</td><td class="num ${cls(r.cashNet)}">${r.cash?SGN(r.cashNet):'—'}</td><td class="num ${cls(r.tNet)}">${r.tourneys?SGN(r.tNet):'—'}</td></tr>`});
+  h+=`</tbody></table></div><div class="note" style="margin-top:8px">Ranked by net winnings (cash-out minus buy-ins, re-buys included). Wins = 1st place finishes in tournaments.</div></div>`;
+  h+=`<div class="card" style="align-self:start"><div class="sec-h"><h2>Podium · ${PLABEL[p]}</h2></div>${podium(rows)}${isAdmin()?`<div style="margin-top:12px"><button class="btn wa" data-act="bulletin" data-v="${p}">📣 Share standings</button></div>`:''}</div></div>`;
+  return h;
+}
+function vStats(){
+  const me=ME();const P=D().players;const adm=isAdmin();
+  let pid=adm?(S.statsPid&&P[S.statsPid]?S.statsPid:(P[me]?me:Object.keys(P)[0])):(P[me]?me:null);
+  if(!pid)return `<div class="empty card"><span class="big">📈</span>${adm?'No players yet.':'Join the Cartel to see your personal stats.'}${S.uid&&!P[me]?'<div style="margin-top:10px"><button class="btn gold" data-act="register">Join the Cartel</button></div>':''}</div>`;
+  const p=P[pid];const all=allEntries().filter(e=>e.pid===pid);
+  const opts=Object.keys(P).sort((a,b)=>pname(a).localeCompare(pname(b))).map(id=>`<option value="${esc(id)}"${id===pid?' selected':''}>${esc(pname(id))}${id===me?' (you)':''}</option>`).join('');
+  let h=`<div class="card" style="margin-bottom:16px"><div class="profile-head">${av(pid,true,true)}<div style="flex:1;min-width:180px"><h2>${esc(p.name||p.nick)}</h2><div class="small muted">${p.nick?'“'+esc(p.nick)+'” · ':''}Member since ${p.joined?new Date(p.joined).toLocaleDateString('en-GB',{month:'long',year:'numeric'}):'—'}</div>${okPhoto(p.photo)?'<div class="small muted" style="margin-top:4px">🔍 Tap the photo to see it full size</div>':''}${pid===me?`<div style="margin-top:8px"><button class="btn sm" data-act="profile">${okPhoto(p.photo)?'📷 Change photo':'📷 Add your photo'}</button></div>`:''}</div>${adm?`<label class="f" style="min-width:200px">♛ Admin · viewing player<select data-act="pickplayer">${opts}</select></label>`:'<span class="pill">🔒 Only you and the admin can see this page</span>'}</div></div>`;
+  h+=`<div class="pgrid" style="margin-bottom:16px">`;
+  for(const per of ['week','month','year']){
+    const es=all.filter(e=>inPeriod(e,per));const a=aggregate(es)[0];const rk=standings(per).findIndex(r=>r.pid===pid);
+    h+=`<div class="pcard"><h4>${PLABEL[per]}</h4><div class="net ${a?cls(a.net):''}">${a?SGN(a.net):'£0'}</div><dl>
+      <dt>Ranking</dt><dd>${rk>=0?ord(rk+1)+' of '+standings(per).length:'—'}</dd>
+      <dt>Games played</dt><dd>${a?a.games:0}</dd>
+      <dt>Total put in</dt><dd>${GBP(a?a.i:0)}</dd>
+      <dt>Total taken out</dt><dd>${GBP(a?a.o:0)}</dd>
+      <dt>Tourney wins</dt><dd>${a?a.wins:0}</dd>
+      <dt>Best finish</dt><dd>${a&&a.best?ord(a.best):'—'}</dd>
+      <dt>Cash games net</dt><dd class="${a?cls(a.cashNet):''}">${a&&a.cash?SGN(a.cashNet):'—'}</dd></dl></div>`;
+  }
+  h+=`</div>`;
+  h+=`<div class="card" style="margin-bottom:16px"><div class="sec-h"><h2>Running total · all time</h2><span class="small muted">${all.length} games</span></div>${chartSVG(all)}</div>`;
+  h+=`<div class="card"><div class="sec-h"><h2>Game history</h2></div>`;
+  if(!all.length)h+=`<div class="empty">No games played yet.</div>`;
+  else{h+=`<div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Game</th><th class="num">Finish</th><th class="num">In</th><th class="num">Out</th><th class="num">Net</th></tr></thead><tbody>${all.slice().reverse().map(e=>{const t=TYPES[e.g.type]||{};return `<tr><td>${esc(e.dt.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'}))}</td><td>${t.icon||''} ${esc(e.g.title||t.short)}</td><td class="num">${e.kind==='tourney'?(e.pos?(e.pos<=3?['🥇','🥈','🥉'][e.pos-1]:ord(e.pos)):'—'):'<span class="pill">cash</span>'}</td><td class="num">${GBP(e.i)}</td><td class="num">${GBP(e.o)}</td><td class="num ${cls(e.net)}">${SGN(e.net)}</td></tr>`}).join('')}</tbody></table></div>`}
+  return h+`</div>`;
+}
+function chartSVG(es){
+  if(es.length<1)return '<div class="empty">Your chart appears after your first game.</div>';
+  const sm=window.innerWidth<600;const W=sm?360:640,H=sm?200:220,pl=sm?50:56,pr=14,pt=14,pb=26;let run=0;const pts=[{v:0,e:null}].concat(es.map(e=>({v:(run+=e.net),e})));
+  const vs=pts.map(p=>p.v);let lo=Math.min(0,...vs),hi=Math.max(0,...vs);if(lo===hi){hi+=10;lo-=10}const pad=(hi-lo)*.1;lo-=pad;hi+=pad;
+  const x=i=>pl+(W-pl-pr)*(pts.length===1?0:i/(pts.length-1));const y=v=>pt+(H-pt-pb)*(1-(v-lo)/(hi-lo));
+  const ticks=[];const step=niceStep((hi-lo)/4);for(let t=Math.ceil(lo/step)*step;t<=hi;t+=step)ticks.push(t);
+  let s=`<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Running total of net winnings">`;
+  ticks.forEach(t=>{s+=`<line x1="${pl}" x2="${W-pr}" y1="${y(t)}" y2="${y(t)}" stroke="currentColor" stroke-opacity="${t===0?.45:.12}" ${t===0?'stroke-dasharray="4 4"':''}/><text x="${pl-8}" y="${y(t)+4}" text-anchor="end" font-size="11" fill="currentColor" fill-opacity=".6" font-family="Oswald">${esc(GBP(t))}</text>`});
+  const d=pts.map((p,i)=>(i?'L':'M')+x(i).toFixed(1)+','+y(p.v).toFixed(1)).join('');
+  s+=`<path d="${d} L${x(pts.length-1)},${y(0)} L${x(0)},${y(0)}Z" fill="var(--accent)" fill-opacity=".12"/>`;
+  s+=`<path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  pts.forEach((p,i)=>{if(!p.e)return;const c=p.e.net>=0?'var(--good)':'var(--bad)';const t=TYPES[p.e.g.type]||{};const tip=`${p.e.dt.toLocaleDateString('en-GB',{day:'numeric',month:'short'})} · ${p.e.g.title||t.short} · ${SGN(p.e.net)} → total ${SGN(p.v)}`;
+    s+=`<circle cx="${x(i)}" cy="${y(p.v)}" r="4.5" fill="${c}" stroke="var(--card2)" stroke-width="2"/><circle class="hit" cx="${x(i)}" cy="${y(p.v)}" r="16" fill="transparent" data-tip="${esc(tip)}" style="cursor:pointer"/>`});
+  const last=pts[pts.length-1];s+=`<text x="${x(pts.length-1)}" y="${y(last.v)-10}" text-anchor="end" font-size="13" font-family="Oswald" fill="currentColor">${esc(SGN(last.v))}</text>`;
+  return s+`</svg><div class="tip"></div></div>`;
+}
+function niceStep(r){const p=Math.pow(10,Math.floor(Math.log10(r||1)));const n=r/p;return (n<=1?1:n<=2?2:n<=5?5:10)*p}
+function wireChart(){document.querySelectorAll('.chart').forEach(c=>{const tip=c.querySelector('.tip');const svg=c.querySelector('svg');c.querySelectorAll('.hit').forEach(h=>{const show=()=>{const b=svg.getBoundingClientRect(),cb=c.getBoundingClientRect();const sc=b.width/svg.viewBox.baseVal.width;tip.textContent=h.dataset.tip;tip.style.left=(b.left-cb.left+h.cx.baseVal.value*sc)+'px';tip.style.top=(b.top-cb.top+h.cy.baseVal.value*sc)+'px';tip.style.display='block'};h.addEventListener('pointerenter',show);h.addEventListener('pointerdown',show);h.addEventListener('pointerleave',()=>tip.style.display='none')})})}
+function vAdmin(){
+  if(!isAdmin())return '<div class="empty">Admins only.</div>';
+  const P=D().players;const ids=Object.keys(P).sort((a,b)=>pname(a).localeCompare(pname(b)));
+  let h=`<div class="kpis"><div class="kpi" data-suit="♛"><div class="lab">You are</div><div class="val" style="font-size:20px;padding-top:6px">The Boss</div><div class="sub">admin controls</div></div>
+   <div class="kpi" data-suit="♠"><div class="lab">Players</div><div class="val">${ids.length}</div><div class="sub">${ids.filter(i=>P[i].notifyWA!==false&&P[i].mobile).length} on WhatsApp</div></div>
+   <div class="kpi" data-suit="♥"><div class="lab">Games</div><div class="val">${Object.keys(D().games).length}</div><div class="sub">${sortedGames('upcoming').length} upcoming</div></div>
+   <div class="kpi" data-suit="♦"><div class="lab">App link</div><div class="val" style="font-size:15px;padding-top:8px">${appUrl()?'✅ Set':'⚠️ Not set'}</div><div class="sub"><a href="#admin" data-act="settings">settings</a></div></div></div>`;
+  h+=`<div class="card" style="margin-bottom:16px"><div class="sec-h"><h2>Quick actions</h2></div><div class="row">
+   <button class="btn gold" data-act="newgame">＋ Publish new game</button>
+   <button class="btn" data-act="invite">✉️ Invite players</button>
+   <button class="btn wa" data-act="bulletin" data-v="week">📣 Weekly standings update</button>
+   <button class="btn" data-act="addplayer">👤 Add player manually</button>
+   <button class="btn" data-act="settings">⚙️ Settings</button>
+   ${S.demo?'':'<button class="btn ghost" data-act="demo-on">👀 Preview with sample data</button>'}</div></div>`;
+  h+=`<div class="grid"><div class="card"><div class="sec-h"><h2>Player roster</h2><span class="small muted">auto-added when they register</span></div>`;
+  h+=ids.length?`<div class="tbl-wrap"><table><thead><tr><th>Player</th><th>Mobile</th><th>Email</th><th>Alerts</th><th></th></tr></thead><tbody>${ids.map(id=>{const p=P[id];const wa=waDigits(p.mobile);return `<tr><td><div style="display:flex;gap:8px;align-items:center">${av(id)}<div><b>${esc(p.name)}</b>${p.manual?' <span class="pill">manual</span>':''}${p.nick?`<div class="small muted">${esc(p.nick)}</div>`:''}</div></div></td><td>${p.mobile?(wa?`<a href="https://wa.me/${wa}" target="_blank" rel="noopener">${esc(p.mobile)}</a>`:esc(p.mobile)):'—'}</td><td>${p.email?esc(p.email):'—'}</td><td>${p.notifyWA!==false?'💬':''}${p.notifyEmail!==false?' ✉️':''}</td><td style="white-space:nowrap">${id===ME()?'':`<button class="btn sm ghost" data-act="delplayer" data-p="${esc(id)}">Remove</button>`}</td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty">No players yet — send the invite.</div>';
+  const gf=S.adminGF||'all';const gl=sortedGames('all').filter(([,g])=>gf==='all'||(gf==='open'?g.status!=='completed':g.status==='completed'));
+  S.gsel=S.gsel||{};Object.keys(S.gsel).forEach(k=>{if(!D().games[k])delete S.gsel[k]});const nsel=gl.filter(([id])=>S.gsel[id]).length;
+  h+=`</div><div class="card" style="align-self:start"><div class="sec-h"><h2>All games</h2><div class="tabs-inline">${[['all','All'],['open','Open'],['completed','Completed']].map(([k,l])=>`<button class="${gf===k?'on':''}" data-act="admin-gf" data-v="${k}">${l}</button>`).join('')}</div></div>`;
+  if(gl.length)h+=`<div class="row" style="margin-bottom:10px;justify-content:space-between"><label class="check" style="font-size:13.5px"><input type="checkbox" data-act="gsel-all" ${nsel&&nsel===gl.length?'checked':''}> Select all${gf==='all'?'':' '+gf}</label><button class="btn sm red" data-act="gdel-sel" ${nsel?'':'disabled'}>🗑 Delete selected${nsel?' ('+nsel+')':''}</button></div>`;
+  h+=gl.length?`<div class="list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:8px">${gl.map(([id,g])=>{const t=TYPES[g.type]||{};const a=attendees(id);return `<div class="li"><input type="checkbox" data-act="gsel" data-g="${esc(id)}" ${S.gsel[id]?'checked':''} style="width:18px;height:18px;flex:none" aria-label="Select game"><span style="font-size:18px">${t.icon||'🃏'}</span><div class="grow"><div class="t">${esc(g.title||t.short)}</div><div class="small muted">${esc(fmtDate(g))} · <span class="status st-${esc(g.status)}" style="padding:1px 6px">${esc(g.status)}</span> · ${g.status==='completed'?(g.results||[]).length+' played':a.in.length+' in'}</div></div><div class="row" style="gap:4px">${g.status!=='completed'?`<button class="btn sm" data-act="sendpoll" data-g="${esc(id)}" title="Send poll">📣</button>`:''}<button class="btn sm" data-act="results" data-g="${esc(id)}" title="Results">🏁</button><button class="btn sm" data-act="editgame" data-g="${esc(id)}" title="Edit">✎</button><button class="btn sm ghost" data-act="delgame" data-g="${esc(id)}" title="Delete game" style="color:var(--bad)">🗑</button></div></div>`}).join('')}</div>`:`<div class="empty">No ${gf==='all'?'':gf+' '}games.</div>`;
+  return h+`</div></div>`;
+}
+
+/* ================= MODALS ================= */
+function openModal(title,body,foot){$('#modal').innerHTML=`<div class="modal-h"><h3>${title}</h3><button data-act="close-modal" aria-label="Close">×</button></div><div class="modal-b">${body}</div>${foot?`<div class="modal-f">${foot}</div>`:''}`;$('#modalBg').classList.add('open');const f=$('#modal').querySelector('input:not([type=checkbox]),select');if(f&&window.innerWidth>720)setTimeout(()=>f.focus(),50)}
+function closeModal(){CHAT_OPEN=null;$('#modalBg').classList.remove('open');$('#modal').innerHTML=''}
+function val(id){const e=document.getElementById(id);return e?e.value.trim():''}
+
+/* ---- chat ---- */
+let CHAT_OPEN=null;
+function chatFor(gid){return (S.demo?(S.demoChat||[]):S.chat||[]).filter(m=>m&&m.gid===gid).sort((a,b)=>num(a.at)-num(b.at))}
+function seenKey(gid){return 'cartel-seen-'+gid}
+function unread(gid){const seen=num(lsGet(seenKey(gid)));return chatFor(gid).filter(m=>m.uid!==ME()&&num(m.at)>seen).length}
+function chatList(gid){const ms=chatFor(gid);if(!ms.length)return '<div class="empty" style="padding:16px">No messages yet — start the banter 🃏</div>';
+  return ms.map(m=>{const mine=m.uid===ME();const t=new Date(num(m.at));return `<div class="cm${mine?' mine':''}">${mine?'':av(m.uid)}<div class="bub">${mine?'':`<div class="meta2">${esc(pname(m.uid,true))}</div>`}${esc(m.text)}<span class="tm">${esc(t.toLocaleString('en-GB',{weekday:'short',hour:'2-digit',minute:'2-digit'}))}</span>${mine||isAdmin()?`<button class="del" data-act="chat-del" data-id="${esc(m.id)}" title="Delete">✕</button>`:''}</div></div>`}).join('')}
+function openChat(gid){const g=D().games[gid];if(!g)return;CHAT_OPEN=gid;lsSet(seenKey(gid),String(Date.now()));
+  openModal('💬 '+esc(g.title||'Game chat'),`<div class="small muted">${esc(fmtDate(g))}${g.venue?' · 📍 '+esc(g.venue):''}</div><div class="chatbox" id="chatBox">${chatList(gid)}</div><form novalidate data-form="chat" class="chatin"><textarea id="chatIn" rows="1" maxlength="500" placeholder="Write a message…"></textarea><button class="btn gold" type="submit">Send</button></form>${waGroup()?`<div class="note">Want everyone to see it straight away? Also post in the <a href="${esc(waGroup())}" target="_blank" rel="noopener">WhatsApp group</a>.</div>`:''}`);
+  const b=$('#chatBox');if(b)b.scrollTop=b.scrollHeight;render()}
+function refreshChat(){if(!CHAT_OPEN)return;const b=$('#chatBox');if(!b){CHAT_OPEN=null;return}const atBottom=b.scrollHeight-b.scrollTop-b.clientHeight<40;b.innerHTML=chatList(CHAT_OPEN);if(atBottom)b.scrollTop=b.scrollHeight;lsSet(seenKey(CHAT_OPEN),String(Date.now()))}
+let chatBusy=false;
+async function sendChat(){const i=$('#chatIn');const text=(i&&i.value||'').trim().slice(0,500);if(!text||chatBusy)return;const id=ME();if(!id||!D().players[id])return toast('Join the Cartel first',true);
+  const m={gid:CHAT_OPEN,uid:id,text,at:Date.now()};chatBusy=true;
+  if(S.demo){S.demoChat=(S.demoChat||[]).concat([Object.assign({id:'c'+uid8()},m)]);i.value='';chatBusy=false;refreshChat();render();return}
+  const ok=await W(()=>S.db.collection('chat').doc('c'+uid8()).set(m));chatBusy=false;if(ok){i.value='';i.focus()}}
+function openJoinGroup(){openModal('💬 One more thing…',`<div style="text-align:center;font-size:44px">💬</div><div style="text-align:center"><b>Join our WhatsApp group<br>“The Yedid's Poker Cartel”</b></div><div class="note" style="text-align:center">That's where the crew chats, game alerts land and weekly standings get posted.</div>`,`<button class="btn" data-act="close-modal">Later</button><a class="btn wa" href="${esc(waGroup())}" target="_blank" rel="noopener" data-act="wa-joined">Join the group</a>`)}
+let PF_PHOTO,PF_FULL=null;const FULL_CACHE={};
+function previewAv(id,photo){if(okPhoto(photo))return `<img class="av lg xl ph" src="${photo}" alt="Your photo">`;const hasName=!!(D().players[id]||{}).name;return `<span class="av lg xl" style="background:${avColor(id)}">${hasName?esc(initials(id)):'📷'}</span>`}
+function shrinkPhoto(file,S2,maxLen){S2=S2||320;maxLen=maxLen||60000;return new Promise((res,rej)=>{const url=URL.createObjectURL(file);const img=new Image();img.onload=()=>{const s=Math.min(img.naturalWidth,img.naturalHeight);const c=document.createElement('canvas');c.width=c.height=S2;const x=c.getContext('2d');x.imageSmoothingQuality='high';x.drawImage(img,(img.naturalWidth-s)/2,(img.naturalHeight-s)/2,s,s,0,0,S2,S2);URL.revokeObjectURL(url);let q=.85,d=c.toDataURL('image/jpeg',q);while(d.length>maxLen&&q>.4){q-=.1;d=c.toDataURL('image/jpeg',q)}res(d)};img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('bad image'))};img.src=url})}
+async function onPhotoPicked(input){const f=input.files&&input.files[0];input.value='';if(!f)return;if(!/^image\//.test(f.type)&&!/\.(jpe?g|png|webp|heic|heif)$/i.test(f.name))return toast('Please choose a photo',true);
+  try{const d=await shrinkPhoto(f);PF_FULL=await shrinkPhoto(f,900,200000);PF_PHOTO=d;$('#pf_prev').innerHTML=previewAv(ME(),d);$('#pf_rm').hidden=false;toast('Looking good 📸 — tap Save to keep it')}catch(e){toast("Couldn't read that photo — try a JPG or PNG",true)}}
+async function openZoom(pid){const p=D().players[pid];if(!p||!okPhoto(p.photo))return;const old=document.querySelector('.zoom');if(old)old.remove();
+  const z=document.createElement('div');z.className='zoom';z.dataset.act='zoom-close';z.innerHTML=`<button class="x" aria-label="Close">×</button><img alt="" src="${FULL_CACHE[pid]||p.photo}"><div class="cap">${esc(p.name||'')}${p.nick?' · “'+esc(p.nick)+'”':''}</div>`;document.body.appendChild(z);
+  if(!FULL_CACHE[pid]&&!S.demo&&S.db){try{const d=await S.db.doc('photos/'+pid).get();const f=d.exists&&d.data().full;if(okPhoto(f)){FULL_CACHE[pid]=f;const im=z.querySelector('img');if(im&&document.body.contains(z))im.src=f}}catch(e){}}}
+function openProfile(isNew){
+  const id=ME();if(!id){toast('Log in first',true);return}
+  PF_PHOTO=undefined;PF_FULL=null;
+  const p=D().players[id]||{email:S.fbUser&&S.fbUser.email};
+  openModal(isNew?'♠ Join the Cartel':'Your profile',profileFields(p,true)+`<div class="note">Your name, mobile and email are visible to the admin and other Cartel members only.${S.demo?'':' Your <b>login</b> email stays <b>'+esc(S.fbUser&&S.fbUser.email||'')+'</b>.'}</div>`,
+   `${isNew?'':'<button class="btn ghost" data-act="change-pw">🔒 Change password</button>'}<button class="btn" data-act="close-modal">Cancel</button><button class="btn gold" data-act="save-profile">${isNew?'♠ Join':'Save'}</button>`);
+}
+
+function collectProfile(){const name=val('pf_name'),email=val('pf_email'),mobile=val('pf_mobile');
+  if(name.length<2){toast('Please enter your full name',true);return null}
+  if(!/^\S+@\S+\.\S+$/.test(email)){toast('Please enter a valid email',true);return null}
+  if(waDigits(mobile).length<8){toast('Please enter a valid mobile number',true);return null}
+  return {name,nick:val('pf_nick'),email,mobile,notifyWA:!!($('#pf_wa')&&$('#pf_wa').checked),notifyEmail:!!($('#pf_em')&&$('#pf_em').checked),photoNew:PF_PHOTO,full:PF_FULL}}
+async function writeProfile(id,c){const old=D().players[id]||{};
+  const ok=await savePlayer(id,{name:c.name,nick:c.nick,email:c.email,mobile:c.mobile,notifyWA:c.notifyWA,notifyEmail:c.notifyEmail,photo:c.photoNew===undefined?(okPhoto(old.photo)?old.photo:null):c.photoNew,joined:old.joined||Date.now(),updated:Date.now()});
+  if(ok&&c.photoNew!==undefined){if(S.demo){FULL_CACHE[id]=c.full}else if(c.photoNew&&c.full){FULL_CACHE[id]=c.full;await W(()=>S.db.doc('photos/'+id).set({full:c.full,at:Date.now()}))}else if(c.photoNew===null){delete FULL_CACHE[id];S.db.doc('photos/'+id).delete().catch(()=>{})}}
+  return ok}
+async function saveProfile(){const c=collectProfile();if(!c)return;const id=ME();const isNew=!(D().players[id]||{}).name;const ok=await writeProfile(id,c);
+  if(ok){closeModal();$('#main').dataset.k='';render();toast(isNew?"Welcome to the Cartel! 🃏":'Profile saved');if(isNew&&waGroup())setTimeout(openJoinGroup,400)}}
+function openGameForm(gid){
+  const g=gid?D().games[gid]:{type:'nlh_tourney',date:nextFriday(),time:'20:00',buyIn:20,maxSeats:9};
+  const dm=dealerMode(g);const vSel=!g.venue?VENUES[0]:(VENUES.includes(g.venue)?g.venue:'__other');
+  openModal(gid?'Edit game':'♛ Publish a new game',`<div class="fgrid">
+   <label class="f full">Game type<select id="gf_type">${Object.entries(TYPES).map(([k,t])=>`<option value="${k}"${g.type===k?' selected':''}>${t.icon} ${esc(t.label)}</option>`).join('')}</select></label>
+   <label class="f full">Title<input id="gf_title" value="${esc(g.title||'')}" placeholder="e.g. Friday Night Freezeout"></label>
+   <label class="f">Date<input id="gf_date" type="date" value="${esc(g.date||'')}"></label>
+   <label class="f">Start time<input id="gf_time" type="time" value="${esc(g.time||'')}"></label>
+   <label class="f full">Venue<select id="gf_venueSel">${VENUES.map(v=>`<option value="${esc(v)}"${vSel===v?' selected':''}>📍 ${esc(v)}</option>`).join('')}<option value="__other"${vSel==='__other'?' selected':''}>✎ Other…</option></select></label>
+   <label class="f full venue-other" ${vSel==='__other'?'':'hidden'}>Other venue<input id="gf_venue" value="${esc(vSel==='__other'?(g.venue||''):'')}" placeholder="Type the venue or address"></label>
+   <label class="f">Buy-in (£)<input id="gf_buy" type="number" inputmode="decimal" min="0" step="1" value="${esc(g.buyIn!=null?g.buyIn:'')}"></label>
+   <label class="f">Number of tables<select id="gf_tables">${[1,2,3,4,5,6].map(n=>`<option value="${n}"${nTables(g)===n?' selected':''}>${n} table${n>1?'s':''}</option>`).join('')}</select></label>
+   <label class="f">Seats per table<input id="gf_seats" type="number" inputmode="numeric" min="2" max="12" value="${esc(perTable(g)||9)}"></label>
+   <div class="full note" id="gf_total">🪑 Total seats for the night: <b>${nTables(g)*(perTable(g)||9)}</b> — once they're taken, new “I'm in” votes go to the waiting list.</div>
+   <label class="f">Blinds / structure<input id="gf_blinds" value="${esc(g.blinds||'')}" placeholder="e.g. 25/50, 20-min levels"></label>
+   <label class="f">Re-buys / add-ons<input id="gf_rebuys" value="${esc(g.rebuys||'')}" placeholder="e.g. 1 re-buy until level 4"></label>
+   <label class="f full">Dealer at the table?<select id="gf_dealer"><option value="none"${dm==='none'?' selected':''}>No — we deal ourselves</option><option value="hourly"${dm==='hourly'?' selected':''}>Yes — dealer paid per hour</option><option value="rake"${dm==='rake'?' selected':''}>Yes — dealer paid from the rake</option></select></label>
+   <label class="f dl-hourly" ${dm==='hourly'?'':'hidden'}>Dealer cost (£ per hour)<input id="gf_dealerRate" type="number" inputmode="decimal" min="0" step="1" value="${esc(g.dealerRate||'')}" placeholder="e.g. 25"></label>
+   <label class="f dl-rake" ${dm==='rake'?'':'hidden'}>Rake (% of each pot)<input id="gf_rakePct" type="number" inputmode="decimal" min="0" max="100" step="0.5" value="${esc(g.rakePct!=null?g.rakePct:5)}"></label>
+   <label class="f dl-rake" ${dm==='rake'?'':'hidden'}>Max rake per hand (£)<input id="gf_rakeCap" type="number" inputmode="decimal" min="0" step="0.5" value="${esc(g.rakeCap!=null?g.rakeCap:5)}"></label>
+   <label class="f">Hosting fee to join (per player)<span class="money"><input id="gf_host" class="m2" type="number" inputmode="decimal" min="0" step="0.01" value="${esc(num(gid?g.hostFee:5).toFixed(2))}" placeholder="0.00"></span></label>
+   <label class="f full">Notes<textarea id="gf_notes" rows="2" placeholder="Food, drinks, dress code…">${esc(g.notes||'')}</textarea></label>
+  </div>`,`<button class="btn" data-act="close-modal">Cancel</button><button class="btn gold" data-act="save-game" data-g="${esc(gid||'')}">${gid?'Save changes':'Publish & send poll →'}</button>`);
+}
+function nTables(g){return Math.max(1,parseInt(g.tables,10)||1)}
+function perTable(g){return parseInt(g.seatsPerTable,10)||(parseInt(g.maxSeats,10)?Math.ceil(parseInt(g.maxSeats,10)/nTables(g)):0)}
+function seatText(g){const t=nTables(g),p=perTable(g);return t>1?`${t} tables × ${p} seats = ${t*p} seats`:`1 table · ${g.maxSeats} seats`}
+function dealerMode(g){return g.dealerMode||(g.dealer?'hourly':'none')}
+function dealerText(g,short){const m=dealerMode(g);
+  if(m==='rake'){const p=g.rakePct!=null?g.rakePct:5,c=g.rakeCap!=null?g.rakeCap:5;return short?`Dealer · ${p}% rake, max ${GBP2(c)}/hand`:`Yes — paid from the rake: ${p}% of each pot, max ${GBP2(c)} per hand`}
+  if(m==='hourly')return short?'Dealer'+(g.dealerRate?' · '+GBP(g.dealerRate)+'/hr':''):'Yes'+(g.dealerRate?' — '+GBP(g.dealerRate)+' per hour':'');
+  return short?'Self-dealt':'No, self-dealt'}
+function GBP2(n){return '£'+num(n).toFixed(2)}
+function nextFriday(){const d=new Date();d.setDate(d.getDate()+((5-d.getDay()+7)%7||7));return d.toISOString().slice(0,10)}
+async function saveGameForm(gid){
+  const date=val('gf_date');if(!date)return toast('Pick a date',true);
+  const old=gid?D().games[gid]:{};
+  const data=Object.assign({},old,{type:val('gf_type'),title:val('gf_title')||TYPES[val('gf_type')].label,date,time:val('gf_time'),venue:val('gf_venueSel')==='__other'?val('gf_venue'):val('gf_venueSel'),buyIn:num(val('gf_buy')),tables:parseInt(val('gf_tables'),10)||1,seatsPerTable:parseInt(val('gf_seats'),10)||0,maxSeats:(parseInt(val('gf_tables'),10)||1)*(parseInt(val('gf_seats'),10)||0),blinds:val('gf_blinds'),rebuys:val('gf_rebuys'),notes:val('gf_notes'),dealerMode:val('gf_dealer'),dealer:val('gf_dealer')!=='none',dealerRate:val('gf_dealer')==='hourly'?num(val('gf_dealerRate')):0,rakePct:val('gf_dealer')==='rake'?num(val('gf_rakePct')):null,rakeCap:val('gf_dealer')==='rake'?num(val('gf_rakeCap')):null,hostFee:num(val('gf_host')),status:old.status||'open',createdAt:old.createdAt||Date.now()});
+  const id=gid||('g'+uid8());
+  if(await saveGame(id,data)){if(gid){closeModal();toast('Game updated')}else{toast('Game published 🃏');openSendPoll(id)}}
+}
+function adminWA(text){const c=D().config||{};const a=c.adminUid&&D().players[c.adminUid];const wa=a&&waDigits(a.mobile);return wa?`<a class="btn wa" style="width:100%" href="https://wa.me/${wa}?text=${encodeURIComponent(text)}" target="_blank" rel="noopener">💬 Message the admin on WhatsApp</a>`:(adminEmail()?`<div class="note" style="text-align:center">Email the admin: <b>${esc(adminEmail())}</b></div>`:'')}
+function adminEmail(){const c=D().config||{};if(c.adminEmail&&/^\S+@\S+\.\S+$/.test(c.adminEmail))return c.adminEmail;const a=c.adminUid&&D().players[c.adminUid];return a&&a.email||''}
+function noticesHtml(){
+  if(!ME()||!D().players[ME()])return '';let h='';
+  for(const [gid,g] of sortedGames('upcoming')){if(g.status==='completed')continue;const a=attendees(gid);const me=ME();
+    const st=a.seated.includes(me)?'seat':a.wait.includes(me)?'wait':'';const prev=lsGet('cartel-st-'+gid);
+    if(st==='seat'&&prev==='wait'){h+=`<div class="notice green"><span class="ic">🎉</span><div style="flex:1;min-width:200px"><b>A seat opened up — you're IN for ${esc(g.title)}!</b><div class="small muted">${esc(fmtDate(g))}${g.venue?' · '+esc(g.venue):''} · you moved up from the waiting list</div></div><button class="btn sm gold" data-act="notice-ok" data-k="cartel-st-${esc(gid)}" data-v="seat">Got it</button></div>`;continue}
+    if(prev!==st&&!(st==='seat'&&prev==='wait'))lsSet('cartel-st-'+gid,st);
+    if(a.full&&g.status==='open'&&!st&&!lsGet('cartel-full-'+gid))h+=`<div class="notice red"><span class="ic">🔴</span><div style="flex:1;min-width:200px"><b>${esc(g.title)} is full — no more seats left</b><div class="small muted">${esc(fmtDate(g))} · ${a.max} seats taken${a.wait.length?' · '+a.wait.length+' on the waiting list':''}. Vote “Join waiting list” — if someone drops out, seats go in order.</div></div><button class="btn sm" data-act="vote" data-g="${esc(gid)}" data-v="in">⏳ Join waiting list</button><button class="btn sm ghost" data-act="notice-ok" data-k="cartel-full-${esc(gid)}" data-v="1">Dismiss</button></div>`;
+    if(st==='wait'&&prev==='wait'){}
+  }
+  return h}
+let LAST_SEAT={};
+function checkPromotion(){const me=ME();if(!me)return;for(const [gid,g] of Object.entries(D().games||{})){if(!g||g.status==='completed')continue;const a=attendees(gid);const st=a.seated.includes(me)?'seat':a.wait.includes(me)?'wait':'';if(LAST_SEAT[gid]==='wait'&&st==='seat')toast(`🎉 A seat opened — you're IN for ${g.title}!`);LAST_SEAT[gid]=st}}
+function waGroup(){const u=(D().config||{}).waGroup||'';return /^https:\/\/chat\.whatsapp\.com\/[A-Za-z0-9]+/.test(u)?u:''}
+function pollText(gid){const g=D().games[gid];const t=TYPES[g.type]||{};const u=appUrl();
+  return `♠♥ THE YEDID's POKER CARTEL ♦♣\n\n🃏 NEW GAME: ${g.title||t.label}\n${t.icon||''} ${t.label}\n📅 ${fmtDate(g,true)}${g.venue?'\n📍 '+g.venue:''}${g.buyIn?'\n💷 Buy-in: '+GBP(g.buyIn):''}${g.maxSeats?'\n🪑 '+seatText(g):''}${g.blinds?'\n🪙 '+g.blinds:''}${g.rebuys?'\n🔁 '+g.rebuys:''}\n🤵 Dealer: ${dealerText(g,false)}${g.hostFee?'\n🏠 Hosting fee: '+GBP2(g.hostFee)+' per player':''}${g.notes?'\n📝 '+g.notes:''}\n\n👉 Log in and vote I'm in / Maybe / Out:\n${u||'[app link — set it in Admin → Settings]'}${waGroup()?'\n\n💬 Chat about it in the app or in our group: '+waGroup():''}\n\nSeats go first come, first served.`}
+function openSendPoll(gid){
+  const g=D().games[gid];if(!g)return;const txt=pollText(gid);const P=D().players;
+  const waP=Object.keys(P).filter(i=>P[i].notifyWA!==false&&waDigits(P[i].mobile).length>=8);
+  const emails=Object.keys(P).filter(i=>P[i].notifyEmail!==false&&P[i].email).map(i=>P[i].email);
+  const subj=`🃏 Poker night: ${g.title||(TYPES[g.type]||{}).label} — ${fmtDate(g)}`;
+  const mailto=`mailto:?bcc=${encodeURIComponent(emails.join(','))}&subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(txt)}`;
+  openModal('📣 Send the poll',`
+   <div class="msg" id="pollMsg">${esc(txt)}</div>
+   <div class="row"><button class="btn sm" data-act="copy" data-src="pollMsg">📋 Copy message</button></div>
+   <div><b>WhatsApp</b><div class="note">Opens WhatsApp with the message ready — pick your Cartel group and tap send.</div>
+    <div class="row" style="margin-top:8px"><a class="btn wa" href="https://wa.me/?text=${encodeURIComponent(txt)}" target="_blank" rel="noopener" data-act="mark-sent" data-g="${esc(gid)}">💬 Send to WhatsApp group</a></div>
+    ${waP.length?`<details style="margin-top:10px"><summary class="small" style="cursor:pointer">Or message players one by one (${waP.length})</summary><div class="chips" style="margin-top:8px">${waP.map(i=>`<a class="chip" style="text-decoration:none;color:inherit" href="https://wa.me/${waDigits(P[i].mobile)}?text=${encodeURIComponent(txt)}" target="_blank" rel="noopener">${av(i)}${esc(pname(i,true))} 💬</a>`).join('')}</div></details>`:''}
+   </div>
+   <div><b>Email</b> <span class="note">(${emails.length} players, sent from your own email as BCC)</span>
+    <div class="row" style="margin-top:8px"><a class="btn" href="${esc(mailto)}" target="_blank" rel="noopener" data-act="mark-sent" data-g="${esc(gid)}">✉️ Open email to all players</a>${emails.length?'<button class="btn sm" data-act="copy" data-src="pollEmails">📋 Copy addresses</button>':''}</div>
+    <div class="msg small" id="pollEmails" style="margin-top:8px;${emails.length?'':'display:none'}">${esc(emails.join(', '))}</div>
+   </div>${g.pollSentAt?`<div class="note">Last sent ${new Date(g.pollSentAt).toLocaleString('en-GB',{weekday:'short',hour:'2-digit',minute:'2-digit'})}.</div>`:''}`,
+   `<button class="btn gold" data-act="close-modal">Done</button>`);
+}
+function bulletinText(p){
+  const rows=standings(p);const yr=standings('year');const u=appUrl();
+  const hdr=p==='week'?`Week commencing ${startOf('week').toLocaleDateString('en-GB',{day:'numeric',month:'short'})}`:PLABEL[p];
+  let s=`♠♥ THE YEDID's POKER CARTEL ♦♣\n🏆 STANDINGS — ${hdr}\n\n`;
+  if(!rows.length)s+='No results recorded yet.\n';
+  rows.forEach((r,i)=>{s+=`${i<3?['🥇','🥈','🥉'][i]:(i+1)+'.'} ${pname(r.pid)} — ${SGN(r.net)} (${r.games} game${r.games>1?'s':''}${r.wins?', '+r.wins+' win'+(r.wins>1?'s':''):''})\n`});
+  if(p!=='year'&&yr.length)s+=`\n👑 ${new Date().getFullYear()} leader: ${pname(yr[0].pid)} ${SGN(yr[0].net)}\n`;
+  const nx=sortedGames('upcoming').filter(([,g])=>g.status==='open')[0];
+  if(nx)s+=`\n🃏 Next up: ${nx[1].title} — ${fmtDate(nx[1])}. Vote now!\n`;
+  s+=`\n📈 Your personal stats: ${u||'[app link]'}`;return s;
+}
+function openBulletin(p){const txt=bulletinText(p||'week');
+  openModal('📣 Standings update',`<div class="tabs-inline">${['week','month','year'].map(k=>`<button class="${(p||'week')===k?'on':''}" data-act="bulletin" data-v="${k}">${PLABEL[k]}</button>`).join('')}</div><div class="msg" id="bullMsg">${esc(txt)}</div><div class="note">Post this to the Cartel WhatsApp group every week. Every player can also see their own live position under “My Stats”.</div>`,
+  `<button class="btn" data-act="copy" data-src="bullMsg">📋 Copy</button><a class="btn wa" href="https://wa.me/?text=${encodeURIComponent(txt)}" target="_blank" rel="noopener">💬 Send to WhatsApp</a>`)}
+function inviteText(name){const u=appUrl();const wg=waGroup();
+  return `♠♥ You're invited to THE YEDID's POKER CARTEL ♦♣\n\n${name?'Hey '+name+'! ':''}Our private poker lounge is live — game polls, who's playing, live rankings and your own win/loss stats.\n\n👉 Tap to join:\n${u||'[app link]'}\n\n1️⃣ Tap 🆕 “New here? Sign up”\n2️⃣ Enter your name, mobile, email & photo and choose a password\n3️⃣ Next time just tap 🔑 Log in with your email & password${wg?'\n\n💬 And join our WhatsApp group “The Yedid\'s Poker Cartel”:\n'+wg:''}\n\n📱 Tip: add it to your home screen — iPhone: Safari → Share → Add to Home Screen · Android: Chrome → ⋮ → Add to Home screen.\n\nSee you at the table 🃏`}
+function openInvite(){const txt=inviteText('');
+  openModal('✉️ Invite players',`
+   <div><b>Send one link to everyone</b> — each friend opens it, taps <b>🆕 Sign up</b> and fills in their own name, mobile, email, photo and password. You don't need to type anything for them.</div>
+   <div class="msg" id="invMsg">${esc(txt)}</div>
+   <div class="row"><a class="btn wa" href="https://wa.me/?text=${encodeURIComponent(txt)}" target="_blank" rel="noopener">💬 Share to WhatsApp</a><button class="btn" data-act="copy" data-src="invMsg">📋 Copy message</button><a class="btn" href="mailto:?subject=${encodeURIComponent("You're invited — THE YEDID's POKER CARTEL")}&body=${encodeURIComponent(txt)}" target="_blank" rel="noopener">✉️ Email</a></div>
+   ${appUrl()?'':'<div class="banner">⚠️ Set the app link in Settings first so it appears in the message.</div>'}`,
+  `<button class="btn" data-act="close-modal">Done</button>`)}
+function openSettings(){const c=D().config||{};
+  openModal('⚙️ Settings',`<label class="f">App link players open<input id="st_url" value="${esc(c.appUrl||'')}" placeholder="${esc(appUrl()||'https://…')}"></label><div class="note">Leave blank to use this website's address automatically.</div>
+  <label class="f">Default theme for new visitors<select id="st_theme">${Object.entries(THEMES).map(([k,t])=>`<option value="${k}"${(c.theme||'cartel')===k?' selected':''}>${esc(t.name)}</option>`).join('')}</select></label><div class="note">Each player can still pick their own theme with the 🎨 button.</div>
+  <label class="f">Admin email for password-reset requests<input id="st_ae" type="email" value="${esc(c.adminEmail||'')}" placeholder="${esc(adminEmail()||'you@example.com')}"></label>
+  <div class="note">Leave blank to use the email on your own player profile${adminEmail()&&!c.adminEmail?' (currently <b>'+esc(adminEmail())+'</b>)':''}.</div>
+  <label class="f">WhatsApp group invite link<input id="st_wa" value="${esc(c.waGroup||'')}" placeholder="https://chat.whatsapp.com/…"></label>
+  <div class="note"><b>How to get it:</b> in WhatsApp create a group called <b>The Yedid's Poker Cartel</b> → open the group → tap its name → <b>Invite via link</b> (iPhone) / <b>Invite to group via link</b> (Android) → <b>Copy link</b>, then paste it here. New members will be asked to join it as soon as they sign up, and it's added to every poll and invite.</div>`,
+  `<button class="btn" data-act="close-modal">Cancel</button><button class="btn gold" data-act="save-settings">Save</button>`)}
+function openAddPlayer(){openModal('👤 Add player manually',`<div class="note">For someone who plays but won't log in. You can record their results; they won't be able to vote themselves.</div><div class="fgrid"><label class="f full">Full name *<input id="ap_name"></label><label class="f">Nickname<input id="ap_nick"></label><label class="f">Mobile<input id="ap_mobile" type="tel" placeholder="+44 7…"></label><label class="f full">Email<input id="ap_email" type="email"></label></div>`,`<button class="btn" data-act="close-modal">Cancel</button><button class="btn gold" data-act="save-addplayer">Add player</button>`)}
+function openThemes(){const cur=currentTheme();openModal('🎨 Choose your table',`<div class="themes">${Object.entries(THEMES).map(([k,t])=>`<button class="tcard${cur===k?' on':''}" data-act="settheme" data-v="${k}"><div class="sw" style="background:${t.sw};color:${t.ink};font-family:${t.font}">♠ ♥ ♦ ♣</div><div class="tn">${esc(t.name)}<div class="small muted" style="font-weight:400">${esc(t.desc)}</div></div></button>`).join('')}</div><div class="note">Your choice is remembered on this device.</div>`)}
+function confirmBox(title,msg,act,data){openModal(title,`<div>${msg}</div>`,`<button class="btn" data-act="close-modal">Cancel</button><button class="btn red" data-act="${act}" ${Object.entries(data||{}).map(([k,v])=>`data-${k}="${esc(v)}"`).join(' ')}>Yes, delete</button>`)}
+
+/* Results editor */
+let RES=null;
+function openResults(gid){
+  const g=D().games[gid];const t=TYPES[g.type]||{kind:'cash'};
+  if(Array.isArray(g.results)&&g.results.length)RES={gid,rows:g.results.map(r=>Object.assign({},r))};
+  else{const a=attendees(gid);RES={gid,rows:a.seated.map((pid,i)=>({pid,pos:'',buyin:g.buyIn||'',cashout:''}))};if(!RES.rows.length)RES.rows.push({pid:'',pos:'',buyin:g.buyIn||'',cashout:''})}
+  drawResults();
+}
+function drawResults(){
+  const g=D().games[RES.gid];const t=TYPES[g.type]||{kind:'cash'};const tour=t.kind==='tourney';const P=D().players;
+  const opts=sel=>`<option value="">— player —</option>`+Object.keys(P).sort((a,b)=>pname(a).localeCompare(pname(b))).map(id=>`<option value="${esc(id)}"${id===sel?' selected':''}>${esc(pname(id))}</option>`).join('');
+  let tin=0,tout=0;RES.rows.forEach(r=>{tin+=num(r.buyin);tout+=num(r.cashout)});
+  const head=`<div class="res-row res-head${tour?'':' cash'}"><span class="pl">Player</span>${tour?'<span>Finish</span>':''}<span>Total in £</span><span>Cash-out £</span><span>Net</span><span></span></div>`;
+  const rows=RES.rows.map((r,i)=>{const n=num(r.cashout)-num(r.buyin);return `<div class="res-row${tour?'':' cash'}"><select class="pl" data-ri="${i}" data-rf="pid">${opts(r.pid)}</select>${tour?`<input type="number" inputmode="numeric" min="1" placeholder="pos" value="${esc(r.pos)}" data-ri="${i}" data-rf="pos">`:''}<input type="number" inputmode="decimal" placeholder="in" value="${esc(r.buyin)}" data-ri="${i}" data-rf="buyin"><input type="number" inputmode="decimal" placeholder="out" value="${esc(r.cashout)}" data-ri="${i}" data-rf="cashout"><span class="num ${cls(n)}" style="font-family:Oswald;text-align:right" data-net="${i}">${SGN(n)}</span><button class="xbtn" data-act="res-del" data-i="${i}" aria-label="Remove">×</button></div>`}).join('');
+  const diff=Math.round((tout-tin)*100)/100;
+  openModal('🏁 Results — '+esc(g.title||t.label),`<div class="note">${tour?'Enter each player\'s finishing position, total they paid in (buy-in + re-buys), and prize money won (0 if out of the money).':'Enter how much each player bought in for in total and what they cashed out with at the end.'} Pre-filled with everyone who voted “I'm in”.</div>${head}<div class="list" id="resRows">${rows}</div><div class="row"><button class="btn sm" data-act="res-add">＋ Add player</button></div><div class="small" id="resTot">Total in <b>${GBP(tin)}</b> · total out <b>${GBP(tout)}</b> ${diff===0?'<span class="pos">✓ balances</span>':`<span class="neg">⚠ off by ${GBP(diff)}</span>`}</div>`,
+  `<button class="btn" data-act="close-modal">Cancel</button><button class="btn gold" data-act="res-save">Save results & complete game</button>`);
+}
+function resInput(e){const i=+e.target.dataset.ri,f=e.target.dataset.rf;if(!RES||!RES.rows[i])return;RES.rows[i][f]=e.target.value;
+  const r=RES.rows[i];const n=num(r.cashout)-num(r.buyin);const el=document.querySelector(`[data-net="${i}"]`);if(el){el.textContent=SGN(n);el.className='num '+cls(n)}
+  let tin=0,tout=0;RES.rows.forEach(r=>{tin+=num(r.buyin);tout+=num(r.cashout)});const diff=Math.round((tout-tin)*100)/100;const t=$('#resTot');if(t)t.innerHTML=`Total in <b>${GBP(tin)}</b> · total out <b>${GBP(tout)}</b> ${diff===0?'<span class="pos">✓ balances</span>':`<span class="neg">⚠ off by ${GBP(diff)}</span>`}`}
+async function saveResults(){
+  const g=D().games[RES.gid];const tour=(TYPES[g.type]||{}).kind==='tourney';
+  const rows=RES.rows.filter(r=>r.pid);const seen=new Set();
+  for(const r of rows){if(seen.has(r.pid))return toast(pname(r.pid)+' is listed twice',true);seen.add(r.pid)}
+  if(!rows.length)return toast('Add at least one player',true);
+  const clean=rows.map(r=>({pid:r.pid,pos:tour&&r.pos?parseInt(r.pos,10):null,buyin:num(r.buyin),cashout:num(r.cashout)}));
+  if(await saveGame(RES.gid,Object.assign({},g,{results:clean,status:'completed',completedAt:Date.now()}))){closeModal();toast('Results saved — rankings updated 🏆');RES=null}
+}
+
+/* ================= EVENTS ================= */
+document.addEventListener('click',async e=>{
+  const el=e.target.closest('[data-act]');if(!el)return;const act=el.dataset.act;const gid=el.dataset.g;
+  if(el.tagName==='SELECT')return;
+  switch(act){
+    case 'vote':return castVote(gid,el.dataset.v);
+    case 'gfilter':S.gameFilter=el.dataset.v;return render();
+    case 'lbp':S.lbPeriod=el.dataset.v;return render();
+    case 'viewplayer':S.statsPid=el.dataset.p;return;
+    case 'themes':return openThemes();
+    case 'settheme':lsSet('cartel-theme',el.dataset.v);applyTheme(el.dataset.v);render();return openThemes();
+    case 'close-modal':return closeModal();
+    case 'register':return openProfile(true);
+    case 'profile':return openProfile(false);
+    case 'save-profile':return saveProfile();
+    case 'back':return goBack();
+    case 'chat':return openChat(gid);
+    case 'notice-ok':lsSet(el.dataset.k,el.dataset.v);return render();
+    case 'announce-full':{const txt=fullText(gid);openModal('🔴 Announce table full',`<div class="msg" id="fullMsg">${esc(txt)}</div><div class="note">Players already see a “Table full” notice in the app. Send this to the WhatsApp group so everyone knows straight away.</div>`,`<button class="btn" data-act="copy" data-src="fullMsg">📋 Copy</button><a class="btn wa" href="https://wa.me/?text=${encodeURIComponent(txt)}" target="_blank" rel="noopener">💬 Send to WhatsApp group</a>`);return}
+    case 'copy-text':{try{await navigator.clipboard.writeText(el.dataset.text);toast('Copied ✓')}catch(_){toast(el.dataset.text)}return}
+    case 'chat-del':{const id=el.dataset.id;if(S.demo){S.demoChat=(S.demoChat||[]).filter(m=>m.id!==id);refreshChat();render();return}await W(()=>S.db.doc('chat/'+id).delete());return}
+    case 'wa-joined':lsSet('cartel-wa-joined','1');if(el.tagName!=='A'){render()}else setTimeout(()=>{closeModal();render()},300);return;
+    case 'zoom':{e.preventDefault();e.stopPropagation();return openZoom(el.dataset.p)}
+    case 'zoom-close':{const z=document.querySelector('.zoom');if(z)z.remove();return}
+    case 'pw-eye':{const i=document.getElementById(el.dataset.for);if(i){const sh=i.type==='password';i.type=sh?'text':'password';el.textContent=sh?'Hide':'Show'}return}
+    case 'logout':closeModal();S.authMode=null;$('#main').dataset.k='';if(S.demo){S.demoLoggedOut=true;render()}else{S.auth.signOut()}toast('Logged out — see you at the table 👋');window.scrollTo({top:0});return;
+    case 'auth-mode':S.authMode=el.dataset.v==='welcome'?null:el.dataset.v;$('#main').dataset.k='';render();window.scrollTo({top:Math.min(window.scrollY,document.querySelector('.hero').offsetHeight)});return;
+    case 'pw-gen':{const pw=genPw();['su_pw1','su_pw2'].forEach(n=>{const i=document.getElementById(n);if(i){i.value=pw;i.type='text'}});document.querySelectorAll('[data-for^="su_pw"]').forEach(b=>b.textContent='Hide');const g=document.getElementById('su_gen');if(g){g.hidden=false;g.innerHTML='Your password: <b>'+esc(pw)+'</b> — save it somewhere safe (your phone\'s notes or password manager).'}return}
+    case 'verify-send':return resendVerify();
+    case 'verify-check':return recheckVerify();
+    case 'change-pw-save':{const old=val('cp_old'),a=val('cp_pw1');if(a.length<8)return toast('New password must be at least 8 characters',true);if(a!==val('cp_pw2'))return toast("The new passwords don't match",true);
+      if(S.demo){closeModal();return toast('Password changed ✓')}
+      try{const u=S.auth.currentUser;await u.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(u.email,old));await u.updatePassword(a);closeModal();toast('Password changed ✓')}catch(e){toast(fbErr(e),true)}return}
+    case 'change-pw':openModal('🔒 Change password',`<div class="fgrid"><label class="f full">Current password${pwField('cp_old','Current password','current-password')}</label><label class="f">New password${pwField('cp_pw1','Min 8 characters','new-password')}</label><label class="f">Confirm new${pwField('cp_pw2','Type it again','new-password')}</label></div>`,`<button class="btn" data-act="close-modal">Cancel</button><button class="btn gold" data-act="change-pw-save">Save new password</button>`);return;
+    case 'pf-remove':PF_PHOTO=null;PF_FULL=null;$('#pf_prev').innerHTML=previewAv(ME(),null);el.hidden=true;return;
+    case 'newgame':return openGameForm(null);
+    case 'editgame':return openGameForm(gid);
+    case 'save-game':return saveGameForm(el.dataset.g||null);
+    case 'sendpoll':return openSendPoll(gid);
+    case 'mark-sent':{const g=D().games[gid];if(g){if(S.demo)g.pollSentAt=Date.now();else S.db.doc('games/'+gid).update({pollSentAt:Date.now()}).catch(()=>{})}return}
+    case 'close':{const g=D().games[gid];return saveGame(gid,Object.assign({},g,{status:'closed'})).then(ok=>ok&&toast('Poll closed'))}
+    case 'reopen':{const g=D().games[gid];return saveGame(gid,Object.assign({},g,{status:'open'})).then(ok=>ok&&toast('Poll reopened'))}
+    case 'delgame':{const g=D().games[gid];if(!g)return;return confirmBox('Delete game?',`Delete <b>${esc(g.title)}</b> (${esc(fmtDate(g))})?<br><br>${g.status==='completed'?'⚠️ Its results will be removed from everyone\'s stats and rankings.':'Everyone\'s votes for this game will be cleared.'} This can't be undone.`,'delgame-yes',{g:gid})}
+    case 'admin-gf':S.adminGF=el.dataset.v;S.gsel={};return render();
+    case 'gsel':S.gsel=S.gsel||{};if(el.checked)S.gsel[gid]=1;else delete S.gsel[gid];return render();
+    case 'gsel-all':{S.gsel={};if(el.checked){const gf=S.adminGF||'all';sortedGames('all').filter(([,g])=>gf==='all'||(gf==='open'?g.status!=='completed':g.status==='completed')).forEach(([id])=>S.gsel[id]=1)}return render()}
+    case 'gdel-sel':{const ids=Object.keys(S.gsel||{}).filter(id=>D().games[id]);if(!ids.length)return;const nc=ids.filter(id=>D().games[id].status==='completed').length;return confirmBox(`Delete ${ids.length} game${ids.length>1?'s':''}?`,`<div class="list">${ids.map(id=>`<div class="small">• ${esc(D().games[id].title)} — ${esc(fmtDate(D().games[id]))}</div>`).join('')}</div>${nc?`<p>⚠️ ${nc} of these ${nc>1?'are':'is'} completed — their results will be removed from stats and rankings.</p>`:''}<p>This can't be undone.</p>`,'gdel-yes',{})}
+    case 'gdel-yes':{closeModal();const ids=Object.keys(S.gsel||{}).filter(id=>D().games[id]);let n=0;for(const id of ids){const ok=S.demo?(delete S.demoData.games[id],true):await W(()=>S.db.doc('games/'+id).delete());if(ok)n++}S.gsel={};render();toast(n+' game'+(n!==1?'s':'')+' deleted');return}
+    case 'delgame-yes':closeModal();return deleteGame(gid);
+    case 'results':return openResults(gid);
+    case 'res-add':RES.rows.push({pid:'',pos:'',buyin:(D().games[RES.gid]||{}).buyIn||'',cashout:''});return drawResults();
+    case 'res-del':RES.rows.splice(+el.dataset.i,1);return drawResults();
+    case 'res-save':return saveResults();
+    case 'bulletin':return openBulletin(el.dataset.v);
+    case 'invite':return openInvite();
+    case 'iv-wa':{const n=val('iv_name'),m=waDigits(val('iv_mob'));if(m.length<8)return toast('Enter their mobile number',true);const a=document.createElement('a');a.href='https://wa.me/'+m+'?text='+encodeURIComponent(inviteText(n));a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove();toast('Opening WhatsApp…');return}
+    case 'iv-em':{const n=val('iv_name'),em=val('iv_em');if(!/^\S+@\S+\.\S+$/.test(em))return toast('Enter their email',true);const a=document.createElement('a');a.href='mailto:'+em+'?subject='+encodeURIComponent("You're invited — THE YEDID's POKER CARTEL")+'&body='+encodeURIComponent(inviteText(n));a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove();return}
+    case 'settings':e.preventDefault();return openSettings();
+    case 'save-settings':{const u=val('st_url');if(u&&!/^https:\/\//.test(u))return toast('The link should start with https://',true);const wg=val('st_wa');if(wg&&!/^https:\/\/chat\.whatsapp\.com\/[A-Za-z0-9]+/.test(wg))return toast('That doesn\'t look like a WhatsApp group link — it should start with https://chat.whatsapp.com/',true);const ae=val('st_ae');if(ae&&!/^\S+@\S+\.\S+$/.test(ae))return toast('Please enter a valid admin email',true);if(await saveConfig(Object.assign({},D().config,{appUrl:u,theme:val('st_theme'),waGroup:wg,adminEmail:ae})))closeModal();return}
+    case 'addplayer':return openAddPlayer();
+    case 'save-addplayer':{const n=val('ap_name');if(n.length<2)return toast('Enter a name',true);if(await savePlayer('m'+uid8(),{name:n,nick:val('ap_nick'),mobile:val('ap_mobile'),email:val('ap_email'),manual:true,joined:Date.now(),notifyWA:true,notifyEmail:true})){closeModal();toast('Player added')}return}
+    case 'delplayer':return confirmBox('Remove player?',`Remove <b>${esc(pname(el.dataset.p))}</b> from the Cartel? Their past results will be hidden from rankings.`,'delplayer-yes',{p:el.dataset.p});
+    case 'delplayer-yes':closeModal();return deletePlayer(el.dataset.p);
+    case 'copy':{const src=document.getElementById(el.dataset.src);if(!src)return;try{await navigator.clipboard.writeText(src.innerText);toast('Copied ✓')}catch(_){const r=document.createRange();r.selectNodeContents(src);const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Selected — press copy')}return}
+    case 'demo-on':startDemo();return;
+    case 'demo-off':S.demo=false;S.resetReqs=S._liveRR||{};$('#main').dataset.k='';render();return;
+  }
+});
+document.addEventListener('submit',e=>{const f=e.target.closest('form[data-form]');if(!f)return;e.preventDefault();const k=f.dataset.form;if(k==='chat')sendChat();else if(k==='login')doLogin();else if(k==='signup')doSignup();else if(k==='forgot')doForgot();else if(k==='complete')doComplete()});
+function updTotal(){const t=parseInt(val('gf_tables'),10)||1,p=parseInt(val('gf_seats'),10)||0,el=$('#gf_total');if(el)el.innerHTML=`🪑 Total seats for the night: <b>${t*p}</b>${t>1?` (${t} tables × ${p})`:''} — once they're taken, new “I'm in” votes go to the waiting list.`}
+document.addEventListener('change',e=>{const el=e.target;if(el.id==='gf_tables'){updTotal();return}if(el.id==='pf_cam'||el.id==='pf_file'){onPhotoPicked(el);return}if(el.classList.contains('m2')){el.value=Math.max(0,num(el.value)).toFixed(2);return}if(el.id==='gf_venueSel'){const o=document.querySelector('.venue-other');if(o){o.hidden=el.value!=='__other';if(!o.hidden)document.getElementById('gf_venue').focus()}return}if(el.id==='gf_dealer'){document.querySelectorAll('.dl-hourly').forEach(x=>x.hidden=el.value!=='hourly');document.querySelectorAll('.dl-rake').forEach(x=>x.hidden=el.value!=='rake');return}if(el.dataset.act==='pickplayer'){S.statsPid=el.value;render()}else if(el.dataset.ri!==undefined)resInput(e)});
+document.addEventListener('input',e=>{if(e.target.id==='gf_seats')updTotal();if(e.target.dataset.ri!==undefined&&e.target.tagName==='INPUT')resInput(e)});
+$('#modalBg').addEventListener('click',e=>{if(e.target.id==='modalBg')closeModal()});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&e.target&&e.target.id==='chatIn'&&window.innerWidth>720){e.preventDefault();sendChat();return}if(e.key==='Escape'){const z=document.querySelector('.zoom');if(z)z.remove();else closeModal()}});
+const HIST=[];let GOING_BACK=false;
+function onHash(){const h=(location.hash||'').slice(1)||'lobby';if(VIEWS.some(v=>v.id===h)){if(h!==S.view){if(!GOING_BACK&&S.view)HIST.push(S.view);if(HIST.length>30)HIST.shift()}GOING_BACK=false;S.view=h;render()}}
+function goBack(){let prev=HIST.pop();while(prev&&prev===S.view)prev=HIST.pop();GOING_BACK=true;prev=prev||'lobby';if(location.hash.slice(1)===prev){GOING_BACK=false;S.view=prev;render()}else location.hash=prev}
+window.addEventListener('hashchange',()=>{onHash();const m=document.querySelector('.nav');if(m)window.scrollTo({top:Math.min(window.scrollY,document.querySelector('.hero').offsetHeight)})});
+
+/* ================= DEMO ================= */
+function startDemo(){
+  const names=[['me','Nir Yedid','The Boss'],['p1','Avi Cohen','Ace'],['p2','Danny Levi','Dan the Man'],['p3','Moshe Katz','Mo'],['p4','Ronen Ben-David','Ronnie'],['p5','Eli Shapiro','The Rock'],['p6','Yoni Mizrahi','Bluffer'],['p7','Gabi Peretz','Gabs']];
+  const players={};names.forEach(([id,n,k],i)=>players[id]={name:n,nick:k,email:k.toLowerCase().replace(/\W/g,'')+'@example.com',mobile:'+44 7700 9000'+(10+i),joined:Date.now()-90*864e5,notifyWA:true,notifyEmail:true});
+  let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+  const games={};const iso=d=>d.toISOString().slice(0,10);
+  const types=['nlh_tourney','nlh_cash','plo_cash','nlh_tourney','omaha_hilo','bounty','nlh_cash','nlh_tourney','plo_tourney','nlh_cash','nlh_tourney','dealers'];
+  for(let k=0;k<12;k++){const d=new Date();d.setDate(d.getDate()-2-k*5);const type=types[k];const t=TYPES[type];const ids=Object.keys(players).filter(()=>rnd()>.22).slice(0,7);if(ids.length<4)ids.push('p1','p2');const uniq=[...new Set(ids)];const buy=t.kind==='tourney'?20:50;let results;
+    if(t.kind==='tourney'){const order=uniq.slice().sort(()=>rnd()-.5);const pot=order.length*buy;results=order.map((pid,i)=>({pid,pos:i+1,buyin:buy+(rnd()>.7?buy:0),cashout:i===0?Math.round(pot*.6):i===1?Math.round(pot*.3):i===2?pot-Math.round(pot*.6)-Math.round(pot*.3):0}));const tin=results.reduce((s,r)=>s+r.buyin,0);results[0].cashout+=tin-pot}
+    else{let rem=0;results=uniq.map(pid=>{const bi=buy*(1+Math.floor(rnd()*2));const co=Math.max(0,Math.round(bi*(0.2+rnd()*1.8)/5)*5);rem+=bi-co;return {pid,pos:null,buyin:bi,cashout:co}});results[0].cashout=Math.max(0,results[0].cashout+rem)}
+    games['d'+k]={type,title:['Friday Night Freezeout','Thursday Cash Table','Omaha Madness','The Monthly Main Event','Hi-Lo Hustle','Bounty Hunters','Sunday Cash','Friday Night Freezeout','PLO Showdown','Midweek Cash','Cartel Championship','Dealer\'s Choice Night'][k],date:iso(d),time:'20:00',venue:"The Yedid's Place",buyIn:buy,maxSeats:9,status:'completed',results,createdAt:Date.now()};
+  }
+  const f=new Date();f.setDate(f.getDate()+((5-f.getDay()+7)%7||7));const w=new Date(f);w.setDate(w.getDate()+5);
+  games.u1={type:'nlh_tourney',title:'Friday Night Freezeout',date:iso(f),time:'20:00',venue:"The Yedid's Place",buyIn:20,tables:1,seatsPerTable:5,maxSeats:5,blinds:'25/50 · 20-min levels',rebuys:'1 re-buy until level 4',notes:'Pizza from 7:30 🍕',dealer:true,dealerMode:'rake',rakePct:5,rakeCap:5,hostFee:10,status:'open',createdAt:Date.now()};
+  games.u2={type:'plo_cash',title:'PLO Wednesday',date:iso(w),time:'19:30',venue:"Mamo's Place",buyIn:50,maxSeats:7,blinds:'50p/£1',status:'open',createdAt:Date.now()};
+  const _T=Date.now();const votes0={me:{g:{u1:'in'}},p1:{g:{u1:'in',u2:'in'}},p2:{g:{u1:'in',u2:'maybe'}},p3:{g:{u1:'maybe'}},p4:{g:{u1:'in',u2:'in'}},p5:{g:{u1:'out',u2:'in'}},p6:{g:{u1:'in'}},p7:{g:{u1:'in'}}};const order=['p4','p1','me','p2','p6','p7','p3','p5'];const votes={};for(const [pid,v] of Object.entries(votes0)){const ts={};for(const k of Object.keys(v.g))ts[k]=_T-(9-order.indexOf(pid))*5400e3-(k==='u2'?3e6:0);votes[pid]={g:v.g,ts}}
+  S.demoData={players,games,votes,config:{appUrl:appUrl()||'',theme:'cartel',waGroup:waGroup()||'https://chat.whatsapp.com/PreviewGroupLink',adminUid:'me'}};S._liveRR=S.resetReqs;S.demoChat=[{id:'c1',gid:'u1',uid:'p1',text:'Who\'s bringing the chips? 🍟',at:Date.now()-7200e3},{id:'c2',gid:'u1',uid:'p4',text:'I\'m in — taking your money again Friday 😎',at:Date.now()-3600e3},{id:'c3',gid:'u1',uid:'me',text:'Doors open 7:30, cards in the air at 8 sharp',at:Date.now()-1800e3}];S.resetReqs={p3:{at:Date.now()-3600e3}};S.demoLoggedOut=false;S.demo=true;render();toast('Preview mode — sample data');
+}
+
+/* ================= BOOT ================= */
+function maybeOnboard(){return;if(S.demo||S.onboarded||!S.uid||!S.loaded.players)return;if(!S.players[S.uid]&&S.canWrite!==false){S.onboarded=true;openProfile(true)}else S.onboarded=true}
+let UNSUBS=[];
+function unsubAll(){UNSUBS.forEach(u=>{try{u()}catch(e){}});UNSUBS=[]}
+function subscribe(){
+  const err=e=>{console.warn('db',e);if(e&&e.code==='permission-denied')toast("Couldn't load data — try logging out and back in.",true)};
+  const on=(q,f)=>UNSUBS.push(q.onSnapshot(f,err));
+  on(S.db.collection('players'),s=>{const o={};s.docs.forEach(d=>{if(d.exists)o[d.id]=d.data()});S.players=o;S.loaded.players=true;render()});
+  on(S.db.collection('games'),s=>{const o={};s.docs.forEach(d=>{if(d.exists)o[d.id]=d.data()});S.games=o;S.loaded.games=true;render()});
+  on(S.db.collection('votes'),s=>{if(voteBusy)return;const o={};s.docs.forEach(d=>{if(d.exists)o[d.id]=d.data()});S.votes=o;S.loaded.votes=true;render()});
+  on(S.db.doc('config/app'),d=>{S.config=d.exists?d.data():{};if(S.owner&&S.uid&&!S.adminSynced){S.adminSynced=true;if(S.config.adminUid!==S.uid)S.db.doc('config/app').set(Object.assign({},S.config,{adminUid:S.uid}),{merge:true}).catch(()=>{})}render()});
+  on(S.db.collection('chat').orderBy('at','desc').limit(800),s=>{S.chat=s.docs.filter(d=>d.exists).map(d=>Object.assign({id:d.id},d.data()));render();refreshChat()});
+}
+(async function boot(){
+  onHash();
+  const cfg=window.CARTEL_FIREBASE;
+  if(!window.firebase||!cfg||!cfg.apiKey||/PASTE|YOUR_/i.test(cfg.apiKey)){S.noBackend=true;startDemo();return}
+  try{
+    firebase.initializeApp(cfg);S.auth=firebase.auth();S.db=firebase.firestore();S.live=true;render();
+    S.auth.onAuthStateChanged(u=>{
+      unsubAll();S.fbUser=u;S.authReady=true;S.players={};S.games={};S.votes={};S.chat=[];S.config={};S.loaded={players:false,games:false,votes:false};S.adminSynced=false;
+      if(u){S.uid=u.uid;S.owner=isAdminUser(u);subscribe()}else{S.uid=null;S.owner=false}
+      $('#main').dataset.k='';render();
+    });
+  }catch(e){console.error(e);S.noBackend=true;startDemo()}
+})();
+})();
+</script>
+</body>
+</html>
